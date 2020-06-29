@@ -47,7 +47,6 @@ passwordValidator = (password) => {
 };
 
 //post router function for signup
-//::TODO:: SHOULD FIX UNIQUE CONSTRAINT ERROR
 module.exports.postSignup = function (req, res) {
   if (!req.body.userid || !req.body.username || !req.body.password) {
     res.status(400).send({ msg: 'Please pass username and password.' });
@@ -224,7 +223,7 @@ module.exports.getCheck2 = async function (req, res) {
   if (!access) {
     res.status(401).send({ success: false, msg: 'Unauthorized' });
   } else {
-    var decode = await jwt.verift(access, process.env.JWTSECRET, function (
+    var decode = await jwt.verify(access, process.env.JWTSECRET, function (
       err,
       data
     ) {
@@ -232,7 +231,7 @@ module.exports.getCheck2 = async function (req, res) {
       console.log(data.id);
       console.log(data.userid);
       var user = { id: data.id, userid: data.userid };
-      res.status(200).sedn(user);
+      res.status(200).send(user);
     });
   }
 };
@@ -250,7 +249,7 @@ module.exports.getCheck = async function (req, res) {
   }
 };
 
-//☆ need FIX
+//signup with transaction
 module.exports.transaction = function (req, res) {
   return models.sequelize
     .transaction((t) => {
@@ -277,7 +276,6 @@ module.exports.transaction = function (req, res) {
       }
     })
     .then(async (user) => {
-      console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:', user);
       //transaction has been committed
       //result is whatever the result of the promise chain returned to the transaction callback
       //update sign_trial_tbl, since execute login with signup at the sametime
@@ -328,6 +326,7 @@ module.exports.transaction = function (req, res) {
     });
 };
 
+//delete data with delete method
 module.exports.deleteDelete = async (req, res) => {
   const user_id = req.params.id;
   return models.sequelize
@@ -346,6 +345,7 @@ module.exports.deleteDelete = async (req, res) => {
     });
 };
 
+//update data with patch method
 module.exports.patchUpdate = async (req, res) => {
   const user_id = req.params.id;
   var updatePhrase = {};

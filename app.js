@@ -10,6 +10,7 @@ require('dotenv').config();
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/api/auth');
+var journalsRouter = require('./routes/api/journals');
 
 var mjwtdecode = require('./routes/api/auth/middle/mjwtdecode');
 
@@ -28,11 +29,12 @@ app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(mjwtdecode);
+app.use(mjwtdecode); //set req.user at this middleware
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/journals', journalsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

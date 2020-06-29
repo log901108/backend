@@ -1,4 +1,4 @@
-//middleware for check login status
+//middleware for check login status and set req.user by decoded jwt
 const jwt = require('jsonwebtoken');
 
 module.exports = async function (req, res, next) {
