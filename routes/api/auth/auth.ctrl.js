@@ -161,7 +161,7 @@ module.exports.postLogin = function (req, res, next) {
             user.UpdateLoginIp(req, req.body.userid);
             user.UpdateloginTrialDate(req.body.userid);
             user.UpdateLoginDate(req.body.userid);
-            console.log('aaaaaaaaaaaaaaaaaaaaaaaaa:', RefreshToken);
+
             //4.Issue Access Token
             var AccessToken = await jwt.sign(
               JSON.parse(
@@ -200,4 +200,185 @@ module.exports.postLogin = function (req, res, next) {
       });
     })
     .catch((err) => res.status(400).send(err));
+};
+
+//post router for logout
+module.exports.postLogout = function (req, res) {
+  var token = getToken(req);
+  if (token) {
+    res.cookie('token', '', { httpOnly: true, expires: new Date(Date.now()) });
+    res.status(201).send({});
+  } else {
+    return res.status(403).send({ success: false, msg: 'Unauthorized' });
+  }
+};
+
+getToken = function (req) {
+  var token = null;
+  if (req && req.cookies) token = req.cookies.token;
+  return token;
+};
+
+module.exports.getCheck2 = async function (req, res) {
+  var access = await getToken(req);
+  if (!access) {
+    res.status(401).send({ success: false, msg: 'Unauthorized' });
+  } else {
+    var decode = await jwt.verift(access, process.env.JWTSECRET, function (
+      err,
+      data
+    ) {
+      console.log('decode:', data);
+      console.log(data.id);
+      console.log(data.userid);
+      var user = { id: data.id, userid: data.userid };
+      res.status(200).sedn(user);
+    });
+  }
+};
+
+module.exports.getCheck = async function (req, res) {
+  var user = null;
+  if (req.user) {
+    user = req.user;
+  }
+
+  if (!user) {
+    res.status(401).send({ success: false, msg: 'Unauthorized' });
+  } else {
+    res.status(200).send(user);
+  }
+};
+
+//☆ need FIX
+module.exports.transaction = function (req, res) {
+  return models.sequelize
+    .transaction((t) => {
+      console.log(req.body);
+      if (!req.body.userid || !req.body.username || !req.body.pasword) {
+        res
+          .status(400)
+          .send({ success: false, msg: 'please pass username and passwd' });
+      } else {
+        if (
+          !validator.isAlphanumeric(req.body.password) &&
+          validator.isLength(req.body.password, { min: 5, max: 15 })
+        ) {
+          //chain all your queries here. make sure you return them.
+          return users_tbl.create(
+            {
+              userid: req.body.userid,
+              password_hash: req.body.password,
+              username: req.body.username,
+            },
+            { transaction: t }
+          );
+        }
+      }
+    })
+    .then(async (user) => {
+      //transaction has been committed
+      //result is whatever the result of the promise chain returned to the transaction callback
+      //update sign_trial_tbl, since execute login with signup at the sametime
+      signin_trial_tbl.create({
+        requested_userid: req.body.userid,
+        requested_password: req.body.password,
+        trial_time: Date.now(),
+        trial_ip: requestIp.getClientIp(req),
+      });
+
+      //update users_tbl for simultaneous sigunp and signin
+      const RefreshToken = await user.UpdateRefreshtoken(
+        user.userid,
+        86400 * 14
+      );
+      user.UpdateClearLoginFailCount(user.userid);
+      user.UpdateLoginIp(req, req.body.userid);
+      user.UpdateloginTrialDate(req.body.userid);
+      user.UpdateLoginDate(req.body.userid);
+
+      var AccessToken = await jwt.sign(
+        JSON.parse(
+          JSON.stringify({
+            id: user.id,
+            userid: user.userid,
+            refresh: RefreshToken,
+          })
+        ),
+        process.env.JWTSECRET,
+        { expiresIn: 30 * 60 }
+      );
+      res.cookie('token', AccessToken, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 30 * 60 * 1000),
+      });
+      res.status(201).send(user);
+    })
+    .catch((err) => {
+      //Transaction has been rolled back
+      //err is whatever rejected the promise chain returned to the transaction callback
+      console.log(err);
+      if (err.parent.code == 23505) {
+        //UNIQUE constraint error
+        res.status(409).send({ msg: 'id alread exist' });
+      } else {
+        res.status(400).send({ msg: 'comit db error' });
+      }
+    });
+};
+
+module.exports.deleteDelete = async (req, res) => {
+  const user_id = req.params.id;
+  return models.sequelize
+    .transaction((t) => {
+      return users_tbl.destroy({ where: { id: user_id }, transaction: t });
+    })
+    .then((result) => {
+      res.status(200).send({
+        success: true,
+        deleted: user_id,
+        msg: `#${user_id} user is deleted`,
+      });
+    })
+    .catch((err) => {
+      res.status(400).send({ success: false, msg: err });
+    });
+};
+
+module.exports.patchUpdate = async (req, res) => {
+  const user_id = req.params.id;
+  var updatePhrase = {};
+
+  if (req.body.username) {
+    updatePhrase['username'] = req.body.username;
+  }
+
+  //TODO: validation need
+  if (req.body.password) {
+    if (passwordValidator(req.body.password)) {
+      updatePhrase['password_hash'] = req.body.password;
+    } else {
+      return res.status(409).send({ success: false, msg: 'validation failed' });
+    }
+  }
+
+  return models.sequelize
+    .transaction((t) => {
+      return users_tbl.findByPk(user_id).then((user) => {
+        user.update(updatePhrase, {
+          returning: true,
+          plain: true,
+        });
+      });
+    })
+    .then((result) => {
+      if (!req.body.username && !req.body.password) {
+        res.status(204).send({ success: true, changed: false });
+      } else {
+        res.status(200).send({ success: true, changed: true });
+      }
+    })
+    .catch((err) => {
+      res.status(400).send({ success: false, msg: err });
+    });
 };
