@@ -64,7 +64,7 @@ module.exports.postSignup = function (req, res) {
         })
         .then(async (user) => {
           //Since user gets login session with signup, update signin_trial_tbl
-          signin_trial_tbl.create({
+          await signin_trial_tbl.create({
             requested_userid: req.body.userid,
             requested_password: req.body.password,
             trial_time: Date.now(),
@@ -104,7 +104,7 @@ module.exports.postSignup = function (req, res) {
           console.log(err);
           if (err.parent.code == 23505) {
             //unique constraint error
-            res.status(409).send({ msg: 'already exists id' });
+            res.status(409).send({ msg: 'already exists id', error: err });
           } else {
             res.status(400).send({ msg: 'commit db error' });
           }
@@ -255,7 +255,7 @@ module.exports.transaction = function (req, res) {
   return models.sequelize
     .transaction((t) => {
       console.log(req.body);
-      if (!req.body.userid || !req.body.username || !req.body.pasword) {
+      if (!req.body.userid || !req.body.username || !req.body.password) {
         res
           .status(400)
           .send({ success: false, msg: 'please pass username and passwd' });
@@ -277,6 +277,7 @@ module.exports.transaction = function (req, res) {
       }
     })
     .then(async (user) => {
+      console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:', user);
       //transaction has been committed
       //result is whatever the result of the promise chain returned to the transaction callback
       //update sign_trial_tbl, since execute login with signup at the sametime

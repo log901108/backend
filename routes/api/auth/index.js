@@ -20,6 +20,6 @@ router.post('/logout', authCtrl.postLogout);
 router.get('/check', authCtrl.getCheck);
 router.post('/post', authCtrl.transaction);
 router.delete('/delete/:id', authCtrl.deleteDelete);
-router.patch('/update/:id', authCtrl.postUpdate);
+router.patch('/update/:id', authCtrl.patchUpdate);
 
 module.exports = router;
