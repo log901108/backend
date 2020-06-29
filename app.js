@@ -11,6 +11,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/api/auth');
 
+var mjwtdecode = require('./routes/api/auth/middle/mjwtdecode');
+
 var app = express();
 
 // view engine setup
@@ -26,6 +28,7 @@ app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(mjwtdecode);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
