@@ -5,7 +5,7 @@ module.exports = {
       .createTable(
         'journals_tbl',
         {
-          _id: {
+          id: {
             allowNull: false,
             autoIncrement: true,
             primaryKey: true,

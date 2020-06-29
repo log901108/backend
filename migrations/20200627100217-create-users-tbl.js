@@ -6,7 +6,7 @@ module.exports = {
       .createTable(
         'users_tbl',
         {
-          _id: {
+          id: {
             allowNull: false,
             autoIncrement: true,
             primaryKey: true,

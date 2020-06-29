@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.createTable(
       'signin_trial_tbl',
       {
-        _id: {
+        id: {
           allowNull: false,
           autoIncrement: true,
           primaryKey: true,

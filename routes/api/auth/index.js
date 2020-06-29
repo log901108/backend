@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
-const authCtrl = require('./auth.ctrl'); /*
+const authCtrl = require('./auth.ctrl');
 router.get('/', authCtrl.getList);
+/*
 router.get('/login', function (req, res, next) {
   res.render('login.ejs');
 });

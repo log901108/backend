@@ -12,7 +12,7 @@ const validator = require('validator');
 
 exports.getList = async (req, res) => {
   users_tbl
-    .findAndCountAll({ order: [['_id', 'ASC']] })
+    .findAndCountAll({ order: [['id', 'ASC']] })
     .then((result) => {
       res
         .status(200)
@@ -25,7 +25,7 @@ exports.getInfo = async (req, res) => {
   users_tbl
     .findOne({
       where: {
-        _id: req.params.id,
+        id: req.params.id,
       },
       limit: 1,
     })
