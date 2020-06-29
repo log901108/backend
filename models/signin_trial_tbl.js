@@ -24,17 +24,20 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       trial_ip: {
-        type: DataTypes.STRING(15),
+        type: DataTypes.STRING(50),
       },
-      created_at: {
+      createdAt: {
+        field: 'created_at',
         allowNull: false,
         type: DataTypes.DATE,
       },
-      updated_at: {
+      updatedAt: {
+        field: 'updated_at',
         allowNull: false,
         type: DataTypes.DATE,
       },
-      deleted_at: {
+      deletedAt: {
+        field: 'deleted_at',
         type: DataTypes.DATE,
       },
     },

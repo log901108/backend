@@ -30,20 +30,18 @@ module.exports = (sequelize, DataTypes) => {
       account_details: {
         type: DataTypes.JSONB,
       },
-
-      created_at: {
+      createdAt: {
+        field: 'created_at',
         allowNull: false,
-
         type: DataTypes.DATE,
       },
-
-      updated_at: {
+      updatedAt: {
+        field: 'updated_at',
         allowNull: false,
-
         type: DataTypes.DATE,
       },
-
-      deleted_at: {
+      deletedAt: {
+        field: 'deleted_at',
         type: DataTypes.DATE,
       },
     },

@@ -54,20 +54,23 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: false,
       },
       login_ip: {
-        type: DataTypes.STRING(15),
+        type: DataTypes.STRING(50),
       },
       refresh_token: {
         type: DataTypes.STRING(255),
       },
-      created_at: {
+      createdAt: {
+        field: 'created_at',
         allowNull: false,
         type: DataTypes.DATE,
       },
-      updated_at: {
+      updatedAt: {
+        field: 'updated_at',
         allowNull: false,
         type: DataTypes.DATE,
       },
-      deleted_at: {
+      deletedAt: {
+        field: 'deleted_at',
         type: DataTypes.DATE,
       },
     },
@@ -85,7 +88,7 @@ module.exports = (sequelize, DataTypes) => {
   //the class method which change password by generated bcrypt hash when column created or updated
   users_tbl.beforeSave((user, options) => {
     if (user.changed('password_hash')) {
-      user.password_hash = bcrype.hashSync(
+      user.password_hash = bcrypt.hashSync(
         user.password_hash,
         bcrypt.genSaltSync(10),
         null
@@ -202,16 +205,12 @@ module.exports = (sequelize, DataTypes) => {
 
   //the instance method update refreshtoken
   users_tbl.prototype.UpdateRefreshtoken = async function (user, expiretime) {
-    var RefreshToken = await jwt.sign(
-      JSON.parse(
-        JSON.stringify({
-          userid: user,
-          signinDate: Date.now(),
-        }),
-        process.env.JWTSECRET,
-        { expiresIn: expiretime }
-      )
+    const payload = JSON.parse(
+      JSON.stringify({ userid: user, signinDate: Date.now() })
     );
+    var RefreshToken = await jwt.sign(payload, process.env.JWTSECRET, {
+      expiresIn: expiretime,
+    });
 
     this.update(
       {
@@ -219,6 +218,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       { where: { userid: user } }
     );
+
     return RefreshToken;
   };
 

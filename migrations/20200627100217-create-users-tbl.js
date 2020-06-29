@@ -52,21 +52,23 @@ module.exports = {
             defaultValue: false,
           },
           login_ip: {
-            type: Sequelize.STRING(15),
+            type: Sequelize.STRING(50),
           },
           refresh_token: {
             type: Sequelize.STRING(255),
           },
-          created_at: {
-            allowNull: false,
+          createdAt: {
+            field: 'created_at',
             type: Sequelize.DATE,
-          },
-          updated_at: {
             allowNull: false,
-
-            type: Sequelize.DATE,
           },
-          deleted_at: {
+          updatedAt: {
+            field: 'updated_at',
+            type: Sequelize.DATE,
+            allowNull: false,
+          },
+          deletedAt: {
+            field: 'deleted_at',
             type: Sequelize.DATE,
           },
         },

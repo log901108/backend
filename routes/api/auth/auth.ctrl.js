@@ -47,6 +47,7 @@ passwordValidator = (password) => {
 };
 
 //post router function for signup
+//::TODO:: SHOULD FIX UNIQUE CONSTRAINT ERROR
 module.exports.postSignup = function (req, res) {
   if (!req.body.userid || !req.body.username || !req.body.password) {
     res.status(400).send({ msg: 'Please pass username and password.' });
@@ -66,7 +67,7 @@ module.exports.postSignup = function (req, res) {
           signin_trial_tbl.create({
             requested_userid: req.body.userid,
             requested_password: req.body.password,
-            trial_tim: Date.now(),
+            trial_time: Date.now(),
             trial_ip: requestIp.getClientIp(req),
           });
 
@@ -83,7 +84,7 @@ module.exports.postSignup = function (req, res) {
           var AccessToken = await jwt.sign(
             JSON.parse(
               JSON.stringify({
-                id: user_id,
+                id: user.id,
                 userid: user.userid,
                 refresh: RefreshToken,
               })
@@ -91,10 +92,12 @@ module.exports.postSignup = function (req, res) {
             process.env.JWTSECRET,
             { expiresIn: 30 * 60 }
           );
+
           res.cookie('token', AccessToken, {
             httpOnly: true,
             expires: new Date(Date.now() + 30 * 60 * 1000),
           });
+
           res.status(201).send(user);
         })
         .catch((err) => {
