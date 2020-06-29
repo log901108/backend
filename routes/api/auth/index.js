@@ -15,8 +15,8 @@ router.get('/signup', function (req, res, next) {
 /* POST users listing. */
 
 router.post('/signup', authCtrl.postSignup);
-/*
 router.post('/login', authCtrl.postLogin);
+/*
 router.post('/logout', authCtrl.postLogout);
 router.get('/check', authCtrl.getCheck);
 router.post('/post', authCtrl.transaction);

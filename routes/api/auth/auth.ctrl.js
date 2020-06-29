@@ -116,4 +116,88 @@ module.exports.postSignup = function (req, res) {
   }
 };
 
-//post router function for login 91
+//post router function for login
+module.exports.postLogin = function (req, res, next) {
+  signin_trial_tbl.create({
+    requested_userid: req.body.userid,
+    requested_password: req.body.password,
+    trial_time: Date.now(),
+    trial_ip: requestIp.getClientIp(req),
+  });
+
+  users_tbl
+    .findOne({
+      where: {
+        userid: req.body.userid,
+      },
+      limit: 1,
+    })
+    .then((user) => {
+      if (!user) {
+        return res.status(401).send({
+          msg: 'Authentication failed. User not founded.',
+        });
+      }
+
+      //**The session for issuing token after matching passwd_hash and trial passwd
+      //1. check passwd_hash and trial by users_tbl's instance method of 'comparePassword'
+      user.comparePassword(req.body.password, async (err, isMatch) => {
+        //2.execute under when passwd_hash matched
+        if (isMatch && !err) {
+          if (user.is_account_lock) {
+            res.status(409).send({
+              success: false,
+              msg:
+                'Authentication failed. Account locked because of invalid id or passwd trial more than 5',
+            });
+          } else {
+            //normal case
+            //3. update users_tbl's login info
+            const RefreshToken = await user.UpdateRefreshtoken(
+              req.body.userid,
+              86400 * 14
+            );
+            user.UpdateClearLoginFailCount(req);
+            user.UpdateLoginIp(req, req.body.userid);
+            user.UpdateloginTrialDate(req.body.userid);
+            user.UpdateLoginDate(req.body.userid);
+            console.log('aaaaaaaaaaaaaaaaaaaaaaaaa:', RefreshToken);
+            //4.Issue Access Token
+            var AccessToken = await jwt.sign(
+              JSON.parse(
+                JSON.stringify({
+                  id: user.id,
+                  userid: user.userid,
+                  refresh: RefreshToken,
+                })
+              ),
+              process.env.JWTSECRET,
+              { expiresIn: 30 * 60 }
+            );
+
+            //5.Store at Browser Cookie
+            res.cookie('token', AccessToken, {
+              httpOnly: true,
+              expires: new Date(Date.now() + 30 * 60 * 1000),
+            });
+
+            //6.Response with json
+            res.status(200).send({
+              success: true,
+              token: 'JWT ' + AccessToken,
+              userid: user.userid,
+              createdAt: user.createdAt,
+            }); //should give required info
+          }
+        } else {
+          //isMatch == dismatched passwd
+          user.PlusLoginFailCount(req);
+          res.status(401).send({
+            success: false,
+            msg: 'Authentication failed. Wrong password',
+          });
+        }
+      });
+    })
+    .catch((err) => res.status(400).send(err));
+};
