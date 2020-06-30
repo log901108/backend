@@ -35,7 +35,12 @@ const sanitizeOption = {
 module.exports.postCreate = async (req, res, next) => {
   console.log(req.body);
   console.log(req.user);
-  var code, title, type, amount, tags, details;
+  var code,
+    title,
+    type,
+    amount,
+    tags,
+    details = null;
   if (req.body.code) {
     code = req.body.code;
   }
@@ -96,4 +101,19 @@ module.exports.getRead = (req, res, next) => {
     .catch((err) => {
       res.status(400).send({ success: false, error: err });
     });
+};
+
+module.exports.patchUpdate = async (req, res, next) => {};
+
+module.exports.deleteDelete = async (req, res, next) => {
+  const id = req.params.id;
+
+  journals_tbl.findByPk(id).then((result) => {
+    if (!result) {
+      res.status(404).send({ success: false });
+    } else {
+      result.destroy({ where: { id: id } });
+      res.status(200).send({ success: true, msg: `#${id} journal is deleted` });
+    }
+  });
 };
