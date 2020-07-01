@@ -7,8 +7,8 @@ var client = redis.createClient(6379, '127.0.0.1');
 //redis ex
 
 module.exports = (req, res, next) => {
-  const { id } = req.params;
-
+  //const { id } = req.params;
+  const id = req.originalUrl;
   client.get(id, (err, data) => {
     if (err) {
       console.log(err);

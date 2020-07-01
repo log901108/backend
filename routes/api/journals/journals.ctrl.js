@@ -86,6 +86,10 @@ module.exports.postCreate = async (req, res, next) => {
 
 module.exports.getRead = (req, res, next) => {
   try {
+    const path = req.originalUrl;
+    console.log(path);
+    const url = req.url;
+    console.log(url);
     const id = req.params.id;
     console.log(id);
 
@@ -95,7 +99,7 @@ module.exports.getRead = (req, res, next) => {
         if (!result) {
           res.status(404).send({ success: false });
         } else {
-          req.client.setex(id, 10, JSON.stringify(result));
+          req.client.setex(path, 100, JSON.stringify(result));
           res.status(200).send(result);
         }
       })
