@@ -6,6 +6,10 @@ var bodyParser = require('body-parser');
 var logger = require('morgan');
 var cors = require('cors');
 require('dotenv').config();
+//redis ex
+var redis = require('redis');
+var client = redis.createClient(6379, '127.0.0.1');
+//redis ex
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -13,7 +17,6 @@ var authRouter = require('./routes/api/auth');
 var journalsRouter = require('./routes/api/journals');
 
 var mjwtdecode = require('./routes/api/auth/middle/mjwtdecode');
-
 var app = express();
 
 // view engine setup
@@ -30,6 +33,13 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(mjwtdecode); //set req.user at this middleware
+
+//redis ex
+app.use(function (req, res, next) {
+  req.cache = client;
+  next();
+});
+//
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

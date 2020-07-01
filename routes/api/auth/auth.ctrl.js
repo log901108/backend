@@ -22,6 +22,7 @@ exports.getList = async (req, res) => {
 };
 
 exports.getInfo = async (req, res) => {
+  var id = req.params.id;
   users_tbl
     .findOne({
       where: {
@@ -30,6 +31,7 @@ exports.getInfo = async (req, res) => {
       limit: 1,
     })
     .then((result) => {
+      req.client.setex(id, 10, JSON.stringify(result));
       res.status(200).send({ success: true, data: result });
     })
     .catch((err) => res.status(400).send({ success: false, err: err }));

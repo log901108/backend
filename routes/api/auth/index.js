@@ -2,8 +2,10 @@ var express = require('express');
 var router = express.Router();
 const authCtrl = require('./auth.ctrl');
 
+const mcheckcache = require('./middle/mcheckcache');
+
 router.get('/', authCtrl.getList);
-router.get('/info/:id', authCtrl.getInfo);
+router.get('/info/:id', mcheckcache, authCtrl.getInfo);
 router.get('/check', authCtrl.getCheck);
 router.get('/check2', authCtrl.getCheck2);
 

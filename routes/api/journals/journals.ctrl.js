@@ -3,6 +3,7 @@ var router = express.Router();
 const journals_tbl = require('../../../models').journals_tbl;
 const { Op } = require('sequelize');
 const sanitizeHtml = require('sanitize-html');
+const JSON = require('JSON');
 
 const sanitizeOption = {
   allowedTags: [
@@ -33,8 +34,6 @@ const sanitizeOption = {
 };
 
 module.exports.postCreate = async (req, res, next) => {
-  console.log(req.body);
-  console.log(req.user);
   var code,
     title,
     type,
@@ -86,21 +85,27 @@ module.exports.postCreate = async (req, res, next) => {
 };
 
 module.exports.getRead = (req, res, next) => {
-  const id = req.params.id;
-  console.log(id);
+  try {
+    const id = req.params.id;
+    console.log(id);
 
-  journals_tbl
-    .findByPk(id)
-    .then((result) => {
-      if (!result) {
-        res.status(404).send({ success: false });
-      } else {
-        res.status(200).send(result);
-      }
-    })
-    .catch((err) => {
-      res.status(400).send({ success: false, error: err });
-    });
+    journals_tbl
+      .findByPk(id)
+      .then((result) => {
+        if (!result) {
+          res.status(404).send({ success: false });
+        } else {
+          req.client.setex(id, 10, JSON.stringify(result));
+          res.status(200).send(result);
+        }
+      })
+      .catch((err) => {
+        res.status(400).send({ success: false, error: err });
+      });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ success: false, err: err });
+  }
 };
 
 module.exports.patchUpdate = async (req, res, next) => {};
@@ -115,5 +120,36 @@ module.exports.deleteDelete = async (req, res, next) => {
       result.destroy({ where: { id: id } });
       res.status(200).send({ success: true, msg: `#${id} journal is deleted` });
     }
+  });
+};
+
+module.exports.postProfile = async (req, res, next) => {
+  req.accepts('application/json');
+  var key = req.body.name;
+  var value = JSON.stringify(req.body);
+
+  req.cache.set(key, value, function (err, data) {
+    if (err) {
+      console.log(err);
+      res.send('err' + err);
+      return;
+    }
+    req.cache.expire(key, 100);
+    res.json(value);
+  });
+};
+
+module.exports.getProfile = async (req, res, next) => {
+  var key = req.params.name;
+
+  req.cache.get(key, function (err, data) {
+    if (err) {
+      console.log(err);
+      res.send('err' + err);
+      return;
+    }
+
+    var value = JSON.parse(data);
+    res.json(value);
   });
 };
