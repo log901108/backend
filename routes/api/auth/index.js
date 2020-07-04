@@ -5,7 +5,7 @@ const authCtrl = require('./auth.ctrl');
 const mcheckcache = require('./middle/mcheckcache');
 
 router.get('/', authCtrl.getList);
-router.get('/info/:id', mcheckcache, authCtrl.getInfo);
+router.get('/info/:uuid', mcheckcache, authCtrl.getInfo);
 router.get('/check', authCtrl.getCheck);
 router.get('/check2', authCtrl.getCheck2);
 
@@ -16,7 +16,7 @@ router.post('/login', authCtrl.postLogin);
 router.post('/logout', authCtrl.postLogout);
 router.post('/post', authCtrl.transaction);
 
-router.delete('/delete/:id', authCtrl.deleteDelete);
-router.patch('/update/:id', authCtrl.patchUpdate);
+router.delete('/delete/:uuid', mcheckcache, authCtrl.deleteDelete);
+router.patch('/update/:uuid', mcheckcache, authCtrl.patchUpdate);
 
 module.exports = router;

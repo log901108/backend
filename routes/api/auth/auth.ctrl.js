@@ -26,7 +26,7 @@ exports.getInfo = async (req, res) => {
   users_tbl
     .findOne({
       where: {
-        id: req.params.id,
+        uuid: req.params.uuid,
       },
       limit: 1,
     })
@@ -85,7 +85,7 @@ module.exports.postSignup = function (req, res) {
           var AccessToken = await jwt.sign(
             JSON.parse(
               JSON.stringify({
-                id: user.id,
+                uuid: user.uuid,
                 userid: user.userid,
                 refresh: RefreshToken,
               })
@@ -167,7 +167,7 @@ module.exports.postLogin = function (req, res, next) {
             var AccessToken = await jwt.sign(
               JSON.parse(
                 JSON.stringify({
-                  id: user.id,
+                  uuid: user.uuid,
                   userid: user.userid,
                   refresh: RefreshToken,
                 })
@@ -230,9 +230,9 @@ module.exports.getCheck2 = async function (req, res) {
       data
     ) {
       console.log('decode:', data);
-      console.log(data.id);
+      console.log(data.uuid);
       console.log(data.userid);
-      var user = { id: data.id, userid: data.userid };
+      var user = { uuid: data.uuid, userid: data.userid };
       res.status(200).send(user);
     });
   }
@@ -301,7 +301,7 @@ module.exports.transaction = function (req, res) {
       var AccessToken = await jwt.sign(
         JSON.parse(
           JSON.stringify({
-            id: user.id,
+            uuid: user.uuid,
             userid: user.userid,
             refresh: RefreshToken,
           })
@@ -330,12 +330,13 @@ module.exports.transaction = function (req, res) {
 
 //delete data with delete method
 module.exports.deleteDelete = async (req, res) => {
-  const user_id = req.params.id;
+  const user_id = req.params.uuid;
   return models.sequelize
     .transaction((t) => {
-      return users_tbl.destroy({ where: { id: user_id }, transaction: t });
+      return users_tbl.destroy({ where: { uuid: user_id }, transaction: t });
     })
     .then((result) => {
+      req.client.del(`/api/auth/info/${user_id}`); //delete cache
       res.status(200).send({
         success: true,
         deleted: user_id,
@@ -349,7 +350,7 @@ module.exports.deleteDelete = async (req, res) => {
 
 //update data with patch method
 module.exports.patchUpdate = async (req, res) => {
-  const user_id = req.params.id;
+  const user_id = req.params.uuid;
   var updatePhrase = {};
 
   if (req.body.username) {
@@ -367,7 +368,7 @@ module.exports.patchUpdate = async (req, res) => {
 
   return models.sequelize
     .transaction((t) => {
-      return users_tbl.findByPk(user_id).then((user) => {
+      return users_tbl.findOne({ where: { uuid: user_id } }).then((user) => {
         user.update(updatePhrase, {
           returning: true,
           plain: true,
