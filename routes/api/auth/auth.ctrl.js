@@ -22,7 +22,7 @@ exports.getList = async (req, res) => {
 };
 
 exports.getInfo = async (req, res) => {
-  var id = req.originalUrl;
+  var objectId = req.originalUrl;
   users_tbl
     .findOne({
       where: {
@@ -31,7 +31,7 @@ exports.getInfo = async (req, res) => {
       limit: 1,
     })
     .then((result) => {
-      req.client.setex(id, 100, JSON.stringify(result));
+      req.client.setex(objectId, 100, JSON.stringify(result));
       res.status(200).send({ success: true, data: result });
     })
     .catch((err) => res.status(400).send({ success: false, err: err }));
@@ -53,10 +53,7 @@ module.exports.postSignup = function (req, res) {
   if (!req.body.userid || !req.body.username || !req.body.password) {
     res.status(400).send({ msg: 'Please pass username and password.' });
   } else {
-    if (
-      !validator.isAlphanumeric(req.body.password) &&
-      validator.isLength(req.body.password, { min: 5, max: 15 })
-    ) {
+    if (passwordValidator(req.body.password)) {
       users_tbl
         .create({
           userid: req.body.userid,
@@ -261,10 +258,7 @@ module.exports.transaction = function (req, res) {
           .status(400)
           .send({ success: false, msg: 'please pass username and passwd' });
       } else {
-        if (
-          !validator.isAlphanumeric(req.body.password) &&
-          validator.isLength(req.body.password, { min: 5, max: 15 })
-        ) {
+        if (passwordValidator(req.body.password)) {
           //chain all your queries here. make sure you return them.
           return users_tbl.create(
             {
@@ -336,12 +330,16 @@ module.exports.deleteDelete = async (req, res) => {
       return users_tbl.destroy({ where: { uuid: user_id }, transaction: t });
     })
     .then((result) => {
-      req.client.del(`/api/auth/info/${user_id}`); //delete cache
-      res.status(200).send({
-        success: true,
-        deleted: user_id,
-        msg: `#${user_id} user is deleted`,
-      });
+      if (result == 0) {
+        res.status(404).send({ success: false, msg: 'No user found' });
+      } else {
+        req.client.del(`/api/auth/info/${user_id}`); //! delete cache
+        res.status(200).send({
+          success: true,
+          deleted: user_id,
+          msg: `#${user_id} user is deleted`,
+        });
+      }
     })
     .catch((err) => {
       res.status(400).send({ success: false, msg: err });
@@ -357,18 +355,24 @@ module.exports.patchUpdate = async (req, res) => {
     updatePhrase['username'] = req.body.username;
   }
 
-  //TODO: validation need
   if (req.body.password) {
-    if (passwordValidator(req.body.password)) {
-      updatePhrase['password_hash'] = req.body.password;
+    if (!passwordValidator(req.body.password)) {
+      return res
+        .status(409)
+        .send({
+          success: false,
+          msg: 'new password does not match with validation rule',
+        });
     } else {
-      return res.status(409).send({ success: false, msg: 'validation failed' });
+      updatePhrase['password_hash'] = req.body.password;
     }
   }
 
   return models.sequelize
     .transaction((t) => {
       return users_tbl.findOne({ where: { uuid: user_id } }).then((user) => {
+        console.log('user:', user.uuid);
+        req.client.del(`/api/auth/info/${user_id}`); //! delete cache
         user.update(updatePhrase, {
           returning: true,
           plain: true,
@@ -379,6 +383,8 @@ module.exports.patchUpdate = async (req, res) => {
       if (!req.body.username && !req.body.password) {
         res.status(204).send({ success: true, changed: false });
       } else {
+        console.log('res:', result);
+        //req.client.setex(objectId, 100, JSON.stringify(result));
         res.status(200).send({ success: true, changed: true });
       }
     })

@@ -19,7 +19,7 @@ module.exports = function(passport) {
 };
 */
 
-//7.9 쿠키용 스트레터지
+//* 7.9 쿠키용 스트레터지
 var cookieExtractor = function (req) {
   var token = null;
   if (req && req.cookies) token = req.cookies['token'];

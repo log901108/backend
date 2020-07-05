@@ -11,6 +11,7 @@ var redis = require('redis');
 var client = redis.createClient(6379, '127.0.0.1');
 //redis ex
 
+//! declare Routers
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/api/auth');
@@ -41,6 +42,7 @@ app.use(function (req, res, next) {
 });
 //
 
+//! Routers use
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/auth', authRouter);

@@ -3,8 +3,8 @@ var client = redis.createClient(6379, '127.0.0.1');
 
 module.exports = (req, res, next) => {
   //const { id } = req.params;
-  const objectid = req.originalUrl;
-  client.get(objectid, (err, data) => {
+  const objectId = req.originalUrl;
+  client.get(objectId, (err, data) => {
     if (err) {
       console.log(err);
       res.staus(500).send({ success: false, err: err });
@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
     if (data != null) {
       //data exsits
       req.client = client; //set redis client
-      console.log(objectid);
+      console.log(objectId);
       console.log('cached');
       res.send(data);
     } else {
