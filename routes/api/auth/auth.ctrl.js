@@ -10,7 +10,7 @@ const signin_trial_tbl = require('../../../models').signin_trial_tbl;
 const requestIp = require('request-ip');
 const validator = require('validator');
 
-exports.getList = async (req, res) => {
+module.exports.getList = async (req, res) => {
   users_tbl
     .findAndCountAll({ order: [['id', 'ASC']] })
     .then((result) => {
@@ -21,8 +21,9 @@ exports.getList = async (req, res) => {
     .catch((err) => res.status(400).send({ success: false, err: err }));
 };
 
-exports.getInfo = async (req, res) => {
+module.exports.getInfo = async (req, res) => {
   var objectId = req.originalUrl;
+  req.accepts('application/json');
   users_tbl
     .findOne({
       where: {
@@ -334,6 +335,7 @@ module.exports.deleteDelete = async (req, res) => {
         res.status(404).send({ success: false, msg: 'No user found' });
       } else {
         req.client.del(`/api/auth/info/${user_id}`); //! delete cache
+        //req.client.quit();
         res.status(200).send({
           success: true,
           deleted: user_id,
@@ -357,12 +359,10 @@ module.exports.patchUpdate = async (req, res) => {
 
   if (req.body.password) {
     if (!passwordValidator(req.body.password)) {
-      return res
-        .status(409)
-        .send({
-          success: false,
-          msg: 'new password does not match with validation rule',
-        });
+      return res.status(409).send({
+        success: false,
+        msg: 'new password does not match with validation rule',
+      });
     } else {
       updatePhrase['password_hash'] = req.body.password;
     }
@@ -373,6 +373,7 @@ module.exports.patchUpdate = async (req, res) => {
       return users_tbl.findOne({ where: { uuid: user_id } }).then((user) => {
         console.log('user:', user.uuid);
         req.client.del(`/api/auth/info/${user_id}`); //! delete cache
+        //req.client.quit();
         user.update(updatePhrase, {
           returning: true,
           plain: true,

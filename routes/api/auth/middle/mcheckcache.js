@@ -7,17 +7,19 @@ module.exports = (req, res, next) => {
   client.get(objectId, (err, data) => {
     if (err) {
       console.log(err);
-      res.staus(500).send({ success: false, err: err });
-    }
-    if (data != null) {
-      //data exsits
-      req.client = client; //set redis client
-      console.log(objectId);
-      console.log('cached');
-      res.send(data);
+      res.status(500).send({ success: false, err: err });
     } else {
-      req.client = client;
-      next();
+      if (data != null) {
+        //!data exsits
+        req.client = client; //set redis client
+        console.log('cached');
+        var value = JSON.parse(data);
+        res.json(value);
+      } else {
+        //! no data
+        req.client = client;
+        next();
+      }
     }
   });
 };
