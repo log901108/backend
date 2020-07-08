@@ -23,7 +23,7 @@ module.exports.getList = async (req, res) => {
 
 module.exports.getInfo = async (req, res) => {
   var objectId = req.originalUrl;
-  req.accepts('application/json');
+  console.log('header:', req.headers);
   users_tbl
     .findOne({
       where: {
@@ -32,7 +32,11 @@ module.exports.getInfo = async (req, res) => {
       limit: 1,
     })
     .then((result) => {
-      req.client.setex(objectId, 100, JSON.stringify(result));
+      req.client.setex(
+        objectId,
+        100,
+        JSON.stringify({ success: true, data: result })
+      );
       res.status(200).send({ success: true, data: result });
     })
     .catch((err) => res.status(400).send({ success: false, err: err }));
@@ -97,7 +101,16 @@ module.exports.postSignup = function (req, res) {
             expires: new Date(Date.now() + 30 * 60 * 1000),
           });
 
-          res.status(201).send(user);
+          //TODO set Refresh token at cookie & accesstoken at user
+          //TODO accesstoken을 json으로 넘기고 BARER AUTHORIZATION으로 넘겨서 Authenticate
+          res.cookie('token', RefreshToken, {
+            httpOnly: true,
+            expires: new Date(Date.now() + 30 * 60 * 1000),
+          });
+
+          res
+            .status(201)
+            .send({ success: true, user: user, token: AccessToken });
         })
         .catch((err) => {
           console.log(err);
@@ -171,13 +184,13 @@ module.exports.postLogin = function (req, res, next) {
                 })
               ),
               process.env.JWTSECRET,
-              { expiresIn: 30 * 60 }
+              { expiresIn: 1 * 60 }
             );
 
             //5.Store at Browser Cookie
             res.cookie('token', AccessToken, {
               httpOnly: true,
-              expires: new Date(Date.now() + 30 * 60 * 1000),
+              expires: new Date(Date.now() + 1 * 60 * 1000),
             });
 
             //6.Response with json

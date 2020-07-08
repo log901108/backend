@@ -1,8 +1,10 @@
 const JwtStrategy = require('passport-jwt').Strategy,
   ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken');
+
+const BearerStrategy = require('passport-http-bearer').Strategy;
 // load up the user model
-const user_tbl = require('../models').user_tbl;
+const users_tbl = require('../models').users_tbl;
 
 /*
 module.exports = function(passport) {
@@ -25,23 +27,23 @@ var cookieExtractor = function (req) {
   if (req && req.cookies) token = req.cookies['token'];
   return token;
 };
-
+//TODO https://christiangiacomi.com/posts/express-barer-strategy/
 module.exports = function (passport) {
   var opts = {};
   opts.jwtFromRequest = cookieExtractor; // check token in cookie
   opts.secretOrKey = process.env.JWTSECRET;
-  passport.use(
+  /*passport.use(
     'jwt',
     new JwtStrategy(opts, function (jwt_payload, done) {
-      /*
-    User
-      .findByPk(jwt_payload.id)
-      .then((user) => { return done(null, user); })
-      .catch((error) => { return done(error, false); });
-	  */
+     
+    //User
+    //  .findByPk(jwt_payload.id)
+    //  .then((user) => { return done(null, user); })
+    //  .catch((error) => { return done(error, false); });
+	  
       //refresh token 적용
       console.log('payload:', jwt_payload);
-      user_tbl
+      users_tbl
         .findOne({
           where: {
             refresh_token: jwt_payload.refresh,
@@ -59,6 +61,27 @@ module.exports = function (passport) {
         .catch((error) => {
           return done(error, false);
         });
+    })
+  );
+*/
+  passport.use(
+    new BearerStrategy(function (token, done) {
+      try {
+        if (jwt.verify(token, process.env.JWTSECRET)) {
+          var decoded = jwt.decode(token, process.env.JWTSECRET);
+          users_tbl.findOne({ where: { uuid: decoded.uuid } }).then((user) => {
+            if (!user) {
+              return done(null, false, { msg: 'Incorrect USER' });
+            } else {
+              return done(null, user);
+            }
+          });
+        } else {
+          return done(null, false, { msg: 'invalid token' });
+        }
+      } catch (err) {
+        return done(err);
+      }
     })
   );
 };
