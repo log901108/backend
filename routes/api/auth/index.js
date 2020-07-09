@@ -15,7 +15,7 @@ router.get('/check2', authCtrl.getCheck2);
 router.post('/signup', authCtrl.postSignup);
 router.post(
   '/login',
-  passport.authenticate('bearer', { session: false }),
+  passport.authenticate('bearer', { session: false, failWithError: true }),
   authCtrl.postLogin
 );
 router.post('/logout', authCtrl.postLogout);
@@ -23,5 +23,20 @@ router.post('/post', authCtrl.transaction);
 
 router.delete('/delete/:uuid', mcheckcache, authCtrl.deleteDelete);
 router.patch('/update/:uuid', mcheckcache, authCtrl.patchUpdate);
+
+//! Middleware error handler for json response
+function handleError(err, req, res, next) {
+  var output = {
+    error: {
+      name: err.name,
+      message: err.message,
+      text: err.toString(),
+    },
+  };
+  var statusCode = err.status || 500;
+  res.status(statusCode).json(output);
+}
+
+router.use([handleError]);
 
 module.exports = router;

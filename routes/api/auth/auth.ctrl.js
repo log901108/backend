@@ -101,8 +101,8 @@ module.exports.postSignup = function (req, res) {
             expires: new Date(Date.now() + 30 * 60 * 1000),
           });
 
-          //TODO set Refresh token at cookie & accesstoken at user
-          //TODO accesstoken을 json으로 넘기고 BARER AUTHORIZATION으로 넘겨서 Authenticate
+          //! set Refresh token at cookie & accesstoken at user
+          //! accesstoken을 json으로 넘기고 BARER AUTHORIZATION으로 넘겨서 Authenticate
           res.cookie('token', RefreshToken, {
             httpOnly: true,
             expires: new Date(Date.now() + 30 * 60 * 1000),

@@ -27,7 +27,7 @@ var cookieExtractor = function (req) {
   if (req && req.cookies) token = req.cookies['token'];
   return token;
 };
-//TODO https://christiangiacomi.com/posts/express-barer-strategy/
+//! https://christiangiacomi.com/posts/express-barer-strategy/
 module.exports = function (passport) {
   var opts = {};
   opts.jwtFromRequest = cookieExtractor; // check token in cookie
@@ -64,6 +64,7 @@ module.exports = function (passport) {
     })
   );
 */
+  //TODO: authorization msg and routing
   passport.use(
     new BearerStrategy(function (token, done) {
       try {
