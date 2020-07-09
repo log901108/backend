@@ -93,19 +93,23 @@ module.exports.postSignup = function (req, res) {
               })
             ),
             process.env.JWTSECRET,
-            { expiresIn: 30 * 60 }
+            { expiresIn: process.env.JWTACCESSTOKENMINUTE * 60 }
           );
 
           res.cookie('token', AccessToken, {
             httpOnly: true,
-            expires: new Date(Date.now() + 30 * 60 * 1000),
+            expires: new Date(
+              Date.now() + process.env.JWTACCESSTOKENMINUTE * 60 * 1000
+            ),
           });
 
           //! set Refresh token at cookie & accesstoken at user
           //! accesstoken을 json으로 넘기고 BARER AUTHORIZATION으로 넘겨서 Authenticate
           res.cookie('token', RefreshToken, {
             httpOnly: true,
-            expires: new Date(Date.now() + 30 * 60 * 1000),
+            expires: new Date(
+              Date.now() + process.env.JWTACCESSTOKENMINUTE * 60 * 1000
+            ),
           });
 
           res
@@ -184,13 +188,15 @@ module.exports.postLogin = function (req, res, next) {
                 })
               ),
               process.env.JWTSECRET,
-              { expiresIn: 1 * 60 }
+              { expiresIn: process.env.JWTACCESSTOKENMINUTE * 60 }
             );
 
             //5.Store at Browser Cookie
             res.cookie('token', AccessToken, {
               httpOnly: true,
-              expires: new Date(Date.now() + 1 * 60 * 1000),
+              expires: new Date(
+                Date.now() + process.env.JWTACCESSTOKENMINUTE * 60 * 1000
+              ),
             });
 
             //6.Response with json
@@ -315,11 +321,13 @@ module.exports.transaction = function (req, res) {
           })
         ),
         process.env.JWTSECRET,
-        { expiresIn: 30 * 60 }
+        { expiresIn: process.env.JWTACCESSTOKENMINUTE * 60 }
       );
       res.cookie('token', AccessToken, {
         httpOnly: true,
-        expires: new Date(Date.now() + 30 * 60 * 1000),
+        expires: new Date(
+          Date.now() + process.env.JWTACCESSTOKENMINUTE * 60 * 1000
+        ),
       });
       res.status(201).send(user);
     })

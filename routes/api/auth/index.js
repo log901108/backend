@@ -25,6 +25,7 @@ router.delete('/delete/:uuid', mcheckcache, authCtrl.deleteDelete);
 router.patch('/update/:uuid', mcheckcache, authCtrl.patchUpdate);
 
 //! Middleware error handler for json response
+//! https://stackoverflow.com/questions/15388206/sending-back-a-json-response-when-failing-passport-js-authentication
 function handleError(err, req, res, next) {
   var output = {
     error: {
