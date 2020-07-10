@@ -18,6 +18,7 @@ var authRouter = require('./routes/api/auth');
 var journalsRouter = require('./routes/api/journals');
 
 var mjwtdecode = require('./routes/api/auth/middle/mjwtdecode');
+var mjwtaccesstoken = require('./routes/api/auth/middle/maccesstoken');
 var app = express();
 
 // view engine setup
@@ -34,6 +35,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(mjwtdecode); //set req.user at this middleware
+app.use(mjwtaccesstoken);
 
 //redis ex
 app.use(function (req, res, next) {

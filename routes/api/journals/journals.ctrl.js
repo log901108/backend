@@ -61,17 +61,18 @@ module.exports.postCreate = async (req, res, next) => {
   if (req.body.details) {
     details = req.body.details;
   }
-  var userJson = { created_id: req.user.id, created_userid: req.user.userid };
-
+  //var userJson = { created_id: req.user.uuid, created_userid: req.user.userid };
   if (title && body) {
     journals_tbl
       .create({
         account_title: title,
         account_body: sanitizeHtml(body, sanitizeOption),
-        account_details: userJson,
+        //account_details: userJson,
       })
       .then((result) => {
-        res.status(200).send(result);
+        console.log(req.user);
+        console.log(req.accesstoken);
+        res.status(200).send({ token: req.accesstoken, data: result });
       })
       .catch((err) => {
         res.status(400).send({ err });

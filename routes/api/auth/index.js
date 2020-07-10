@@ -15,7 +15,7 @@ router.get('/check2', authCtrl.getCheck2);
 router.post('/signup', authCtrl.postSignup);
 router.post(
   '/login',
-  passport.authenticate('bearer', { session: false, failWithError: true }),
+  //passport.authenticate('bearer', { session: false, failWithError: true }),
   authCtrl.postLogin
 );
 router.post('/logout', authCtrl.postLogout);
