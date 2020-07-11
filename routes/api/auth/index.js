@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const authCtrl = require('./auth.ctrl');
 const passport = require('passport');
+require('../../../config/passport')(passport);
 
 const mcheckcache = require('./middle/mcheckcache');
 
@@ -13,11 +14,7 @@ router.get('/check2', authCtrl.getCheck2);
 /* POST users listing. */
 
 router.post('/signup', authCtrl.postSignup);
-router.post(
-  '/login',
-  //passport.authenticate('bearer', { session: false, failWithError: true }),
-  authCtrl.postLogin
-);
+router.post('/login', authCtrl.postLogin);
 router.post(
   '/logout',
   passport.authenticate('bearer', { session: false, failWithError: true }),

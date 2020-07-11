@@ -12,11 +12,9 @@ module.exports = async function (req, res, next) {
         err,
         data
       ) {
-        //TODO signinDate 변수 관리 어떻게할지?
-        /* {uuid, userid, signinDate, iat, exp} */
+        //! signinDate 변수 관리 어떻게할지? => signinDate는 유지 iat와 exp만 변경
+        //! req.user = {uuid, userid, signinDate, iat, exp}
         req.user = data;
-
-        console.log(req.user);
       });
       return next();
     } catch (e) {
