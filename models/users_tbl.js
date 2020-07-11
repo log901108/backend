@@ -212,9 +212,13 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   //the instance method update refreshtoken
-  users_tbl.prototype.UpdateRefreshtoken = async function (user, expiretime) {
+  users_tbl.prototype.UpdateRefreshtoken = async function (
+    uuid,
+    user,
+    expiretime
+  ) {
     const payload = JSON.parse(
-      JSON.stringify({ userid: user, signinDate: Date.now() })
+      JSON.stringify({ uuid: uuid, userid: user, signinDate: Date.now() })
     );
     var RefreshToken = await jwt.sign(payload, process.env.JWTSECRET, {
       expiresIn: expiretime,

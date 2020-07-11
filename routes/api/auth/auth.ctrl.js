@@ -76,9 +76,10 @@ module.exports.postSignup = function (req, res) {
 
           //Since user gets login session with signup, update users_tbl
           const RefreshToken = await user.UpdateRefreshtoken(
+            user.uuid,
             user.userid,
-            86400 * 14
-          ); //14days
+            86400 * process.env.REFRESHTOKENDAY
+          ); //! 14days
           user.UpdateClearLoginFailCount(user.userid);
           user.UpdateLoginIp(req, req.body.userid);
           user.UpdateloginTrialDate(req.body.userid);
@@ -89,19 +90,20 @@ module.exports.postSignup = function (req, res) {
               JSON.stringify({
                 uuid: user.uuid,
                 userid: user.userid,
-                refresh: RefreshToken,
+                signinDate: Date.now(),
+                //refresh: RefreshToken,
               })
             ),
             process.env.JWTSECRET,
             { expiresIn: process.env.JWTACCESSTOKENMINUTE * 60 }
           );
 
-          res.cookie('token', AccessToken, {
-            httpOnly: true,
-            expires: new Date(
-              Date.now() + process.env.JWTACCESSTOKENMINUTE * 60 * 1000
-            ),
-          });
+          //res.cookie('token', RefreshToken, {
+          //  httpOnly: true,
+          //  expires: new Date(
+          //    Date.now() + process.env.JWTACCESSTOKENMINUTE * 60 * 1000
+          //  ),
+          //});
 
           //! set Refresh token at cookie & accesstoken at user
           //! accesstoken을 json으로 넘기고 BARER AUTHORIZATION으로 넘겨서 Authenticate
@@ -170,8 +172,9 @@ module.exports.postLogin = function (req, res, next) {
             //normal case
             //3. update users_tbl's login info
             const RefreshToken = await user.UpdateRefreshtoken(
+              user.uuid,
               req.body.userid,
-              86400 * 14
+              86400 * process.env.REFRESHTOKENDAY //! 14days
             );
             user.UpdateClearLoginFailCount(req);
             user.UpdateLoginIp(req, req.body.userid);
@@ -184,7 +187,8 @@ module.exports.postLogin = function (req, res, next) {
                 JSON.stringify({
                   uuid: user.uuid,
                   userid: user.userid,
-                  refresh: RefreshToken,
+                  signinDate: Date.now(),
+                  //refresh: RefreshToken,
                 })
               ),
               process.env.JWTSECRET,
@@ -192,17 +196,17 @@ module.exports.postLogin = function (req, res, next) {
             );
 
             //5.Store at Browser Cookie
-            res.cookie('token', AccessToken, {
+            res.cookie('token', RefreshToken, {
               httpOnly: true,
               expires: new Date(
-                Date.now() + process.env.JWTACCESSTOKENMINUTE * 60 * 1000
+                Date.now() + process.env.REFRESHTOKENDAY * 24 * 60 * 60 * 1000 //! 14days
               ),
             });
 
             //6.Response with json
             res.status(200).send({
               success: true,
-              token: 'JWT ' + AccessToken,
+              token: AccessToken,
               userid: user.userid,
               createdAt: user.createdAt,
             }); //should give required info
@@ -304,8 +308,9 @@ module.exports.transaction = function (req, res) {
 
       //update users_tbl for simultaneous sigunp and signin
       const RefreshToken = await user.UpdateRefreshtoken(
+        user.uuid,
         user.userid,
-        86400 * 14
+        86400 * process.env.REFRESHTOKENDAY
       );
       user.UpdateClearLoginFailCount(user.userid);
       user.UpdateLoginIp(req, req.body.userid);
@@ -317,16 +322,17 @@ module.exports.transaction = function (req, res) {
           JSON.stringify({
             uuid: user.uuid,
             userid: user.userid,
-            refresh: RefreshToken,
+            signinDate: Date.now(),
+            //refresh: RefreshToken,
           })
         ),
         process.env.JWTSECRET,
         { expiresIn: process.env.JWTACCESSTOKENMINUTE * 60 }
       );
-      res.cookie('token', AccessToken, {
+      res.cookie('token', RefreshToken, {
         httpOnly: true,
         expires: new Date(
-          Date.now() + process.env.JWTACCESSTOKENMINUTE * 60 * 1000
+          Date.now() + process.env.REFRESHTOKENDAY * 12 * 60 * 60 * 1000
         ),
       });
       res.status(201).send(user);
@@ -353,19 +359,26 @@ module.exports.deleteDelete = async (req, res) => {
     })
     .then((result) => {
       if (result == 0) {
-        res.status(404).send({ success: false, msg: 'No user found' });
+        res.status(404).send({
+          success: false,
+          token: req.accesstoken,
+          msg: 'No user found',
+        });
       } else {
         req.client.del(`/api/auth/info/${user_id}`); //! delete cache
         //req.client.quit();
         res.status(200).send({
           success: true,
           deleted: user_id,
+          token: req.accesstoken,
           msg: `#${user_id} user is deleted`,
         });
       }
     })
     .catch((err) => {
-      res.status(400).send({ success: false, msg: err });
+      res
+        .status(400)
+        .send({ success: false, token: req.accesstoken, msg: err });
     });
 };
 

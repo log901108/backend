@@ -18,11 +18,25 @@ router.post(
   //passport.authenticate('bearer', { session: false, failWithError: true }),
   authCtrl.postLogin
 );
-router.post('/logout', authCtrl.postLogout);
+router.post(
+  '/logout',
+  passport.authenticate('bearer', { session: false, failWithError: true }),
+  authCtrl.postLogout
+);
 router.post('/post', authCtrl.transaction);
 
-router.delete('/delete/:uuid', mcheckcache, authCtrl.deleteDelete);
-router.patch('/update/:uuid', mcheckcache, authCtrl.patchUpdate);
+router.delete(
+  '/delete/:uuid',
+  mcheckcache,
+  passport.authenticate('bearer', { session: false, failWithError: true }),
+  authCtrl.deleteDelete
+);
+router.patch(
+  '/update/:uuid',
+  mcheckcache,
+  passport.authenticate('bearer', { session: false, failWithError: true }),
+  authCtrl.patchUpdate
+);
 
 //! Middleware error handler for json response
 //! https://stackoverflow.com/questions/15388206/sending-back-a-json-response-when-failing-passport-js-authentication
