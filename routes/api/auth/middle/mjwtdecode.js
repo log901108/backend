@@ -13,7 +13,7 @@ module.exports = async function (req, res, next) {
         data
       ) {
         req.user = data;
-        //console.log(req.user);
+        console.log(req.user);
       });
       return next();
     } catch (e) {
