@@ -14,10 +14,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
-      charge_items_tbl_id: {
+      charge_item_code: {
         //! fk of charges_tbl
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+        field: 'charge_items_tbl_id',
+        type: DataTypes.STRING,
         allowNull: false,
       },
       account_code: {
@@ -67,7 +67,9 @@ module.exports = (sequelize, DataTypes) => {
   charges_tbl.associate = function (models) {
     //associations can be defined here
     charges_tbl.belongsTo(models.charge_items_tbl, {
-      foreignKey: 'charge_items_tbl_id',
+      foreignKey: 'charge_item_code',
+      onDelete: 'cascade',
+      //TODO cascade: https://velog.io/@josworks27/Back-end-Sequelize%EC%9D%98-cascade-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0
     });
   };
   return charges_tbl;

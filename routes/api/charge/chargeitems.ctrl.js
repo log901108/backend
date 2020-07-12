@@ -66,7 +66,7 @@ module.exports.postCreate = async (req, res, next) => {
   if (title && body) {
     charge_items_tbl
       .create({
-        charge_items_code: code,
+        charge_item_code: code,
         charge_item_title: title,
         //account_body: sanitizeHtml(body, sanitizeOption),
         //account_details: userJson,
@@ -120,7 +120,7 @@ module.exports.patchUpdate = async (req, res, next) => {};
 module.exports.deleteDelete = async (req, res, next) => {
   const id = req.params.id;
 
-  charge_items_tbl.findByPk(id).then((result) => {
+  charge_items_tbl.findOne({ where: { id: id } }).then((result) => {
     if (!result) {
       res.status(404).send({ success: false });
     } else {

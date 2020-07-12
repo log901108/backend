@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
       res.status(500).send({ success: false, err: err });
     } else {
       if (data != null) {
-        //!data exsits
+        //! data exsits
         req.client = client; //set redis client
         console.log('cached');
         var value = JSON.parse(data);

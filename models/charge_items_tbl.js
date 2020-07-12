@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   charge_items_tbl.associate = function (models) {
     //associations can be defined here
-    charge_items_tbl.hasMany(models.charges_tbl);
+    charge_items_tbl.hasMany(models.charges_tbl, { onDelete: 'cascade' });
   };
   return charge_items_tbl;
 };

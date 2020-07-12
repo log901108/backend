@@ -13,6 +13,7 @@ module.exports = {
           },
           charge_item_code: {
             type: Sequelize.STRING,
+            primaryKey: true,
           },
           charge_item_title: {
             type: Sequelize.STRING,
