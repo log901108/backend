@@ -5,6 +5,7 @@ const passport = require('passport');
 require('../../../config/passport')(passport);
 
 const mcheckcache = require('./middle/mcheckcache');
+const mcheckrefresh = require('./middle/mcheckrefresh');
 
 router.get('/', authCtrl.getList);
 router.get('/info/:uuid', mcheckcache, authCtrl.getInfo);
@@ -25,6 +26,7 @@ router.post('/post', authCtrl.transaction);
 router.delete(
   '/delete/:uuid',
   mcheckcache,
+  mcheckrefresh,
   passport.authenticate('bearer', { session: false, failWithError: true }),
   authCtrl.deleteDelete
 );

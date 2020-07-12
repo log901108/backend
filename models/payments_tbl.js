@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const journals_tbl = sequelize.define(
-    'journals_tbl',
+  const payments_tbl = sequelize.define(
+    'payments_tbl',
 
     {
       id: {
@@ -53,15 +53,15 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: 'journals_tbl',
+      tableName: 'payments_tbl',
       freezeTableName: true,
       underscored: true,
       timestamps: true,
       paranoid: true,
     }
   );
-  journals_tbl.associate = function (models) {
+  payments_tbl.associate = function (models) {
     //associations can be defined here
   };
-  return journals_tbl;
+  return payments_tbl;
 };

@@ -362,6 +362,7 @@ module.exports.deleteDelete = async (req, res) => {
         res.status(404).send({
           success: false,
           token: req.accesstoken,
+          refresh: req.refresh,
           msg: 'No user found',
         });
       } else {
@@ -371,6 +372,7 @@ module.exports.deleteDelete = async (req, res) => {
           success: true,
           deleted: user_id,
           token: req.accesstoken,
+          refresh: req.refresh,
           msg: `#${user_id} user is deleted`,
         });
       }

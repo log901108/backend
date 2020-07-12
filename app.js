@@ -16,6 +16,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/api/auth');
 var journalsRouter = require('./routes/api/journals');
+var chargeRouter = require('./routes/api/charge');
+var paymentRouter = require('./routes/api/payment');
 
 var mjwtdecode = require('./routes/api/auth/middle/mjwtdecode');
 var mjwtaccesstoken = require('./routes/api/auth/middle/maccesstoken');
@@ -49,6 +51,8 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/journals', journalsRouter);
+app.use('/api/charge', chargeRouter);
+app.use('/api/payment', paymentRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -6,7 +6,7 @@ module.exports = {
       .then(() => {
         return queryInterface
           .createTable(
-            'journals_tbl',
+            'charges_tbl',
             {
               id: {
                 allowNull: false,
@@ -57,7 +57,7 @@ module.exports = {
               },
             },
             {
-              tableName: 'journals_tbl',
+              tableName: 'charges_tbl',
               freezeTableName: true,
               underscored: true,
               timestamps: true,
@@ -65,7 +65,7 @@ module.exports = {
           )
           .then(function () {
             const sql =
-              'CREATE INDEX tags_index_journals_tbl ON "journals_tbl"(account_tags);';
+              'CREATE INDEX tags_index_charges_tbl ON "charges_tbl"(account_tags);';
             return queryInterface.sequelize.query(sql, {
               type: Sequelize.QueryTypes.RAW,
             });
@@ -73,6 +73,6 @@ module.exports = {
       });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('journals_tbl');
+    return queryInterface.dropTable('charges_tbl');
   },
 };

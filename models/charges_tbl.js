@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const journals_tbl = sequelize.define(
-    'journals_tbl',
+  const charges_tbl = sequelize.define(
+    'charges_tbl',
 
     {
       id: {
@@ -8,13 +8,6 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.BIGINT,
-      },
-      uuid: {
-        //! used as surrogate key
-        allowNull: false,
-        //primaryKey: true,
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
       },
       account_code: {
         type: DataTypes.INTEGER,
@@ -53,15 +46,15 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: 'journals_tbl',
+      tableName: 'charges_tbl',
       freezeTableName: true,
       underscored: true,
       timestamps: true,
       paranoid: true,
     }
   );
-  journals_tbl.associate = function (models) {
+  charges_tbl.associate = function (models) {
     //associations can be defined here
   };
-  return journals_tbl;
+  return charges_tbl;
 };
