@@ -6,7 +6,7 @@ module.exports = {
       .then(() => {
         return queryInterface
           .createTable(
-            'charges_tbl',
+            'rooms_tbl',
             {
               id: {
                 allowNull: false,
@@ -14,36 +14,37 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.BIGINT,
               },
-              uuid: {
+              room_uuid: {
                 allowNull: false,
                 //primaryKey: true,
                 type: Sequelize.DataTypes.UUID,
                 defaultValue: Sequelize.literal('uuid_generate_v4()'),
               },
-              charge_items_tbl_id: {
-                //! fk of charges_tbl
-                type: Sequelize.INTEGER,
-                allowNull: false,
-              },
-              account_code: {
+              room_code: {
                 type: Sequelize.INTEGER,
               },
-              account_title: {
+              room_name: {
                 type: Sequelize.STRING,
               },
-              account_type: {
+              room_type: {
                 type: Sequelize.INTEGER,
               },
-              account_amount: {
-                type: Sequelize.BIGINT,
+              room_host_name: {
+                type: Sequelize.STRING,
               },
-              account_body: {
+              room_host_contact: {
+                type: Sequelize.STRING,
+              },
+              room_host_address: {
+                type: Sequelize.STRING,
+              },
+              room_address: {
                 type: Sequelize.TEXT,
               },
-              account_tags: {
+              room_tags: {
                 type: Sequelize.ARRAY(Sequelize.TEXT),
               },
-              account_details: {
+              room_details: {
                 type: Sequelize.JSONB,
               },
               createdAt: {
@@ -62,15 +63,15 @@ module.exports = {
               },
             },
             {
-              tableName: 'charges_tbl',
+              tableName: 'rooms_tbl',
               freezeTableName: true,
               underscored: true,
               timestamps: true,
             }
           )
           .then(function () {
-            const sql =
-              'CREATE INDEX tags_index_charges_tbl ON "charges_tbl"(account_tags);';
+            var sql =
+              'ALTER TABLE "rooms_tbl" ADD CONSTRAINT "rooms_tbl_unique_index" UNIQUE ("room_uuid");';
             return queryInterface.sequelize.query(sql, {
               type: Sequelize.QueryTypes.RAW,
             });
@@ -78,6 +79,6 @@ module.exports = {
       });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('charges_tbl');
+    return queryInterface.dropTable('rooms_tbl');
   },
 };

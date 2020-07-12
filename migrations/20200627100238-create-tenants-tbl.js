@@ -6,7 +6,7 @@ module.exports = {
       .then(() => {
         return queryInterface
           .createTable(
-            'charges_tbl',
+            'tenants_tbl',
             {
               id: {
                 allowNull: false,
@@ -14,36 +14,32 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.BIGINT,
               },
-              uuid: {
+              tenant_uuid: {
                 allowNull: false,
                 //primaryKey: true,
                 type: Sequelize.DataTypes.UUID,
                 defaultValue: Sequelize.literal('uuid_generate_v4()'),
               },
-              charge_items_tbl_id: {
-                //! fk of charges_tbl
-                type: Sequelize.INTEGER,
-                allowNull: false,
+              tenant_code: {
+                //! FK with 호실정보
+                type: Sequelize.DataTypes.UUID,
               },
-              account_code: {
-                type: Sequelize.INTEGER,
-              },
-              account_title: {
+              tenant_name: {
                 type: Sequelize.STRING,
               },
-              account_type: {
+              tenant_type: {
                 type: Sequelize.INTEGER,
               },
-              account_amount: {
-                type: Sequelize.BIGINT,
+              tenant_contact_info: {
+                type: Sequelize.STRING(15),
               },
-              account_body: {
+              tenant_address: {
                 type: Sequelize.TEXT,
               },
-              account_tags: {
+              tenant_tags: {
                 type: Sequelize.ARRAY(Sequelize.TEXT),
               },
-              account_details: {
+              tenant_details: {
                 type: Sequelize.JSONB,
               },
               createdAt: {
@@ -62,7 +58,7 @@ module.exports = {
               },
             },
             {
-              tableName: 'charges_tbl',
+              tableName: 'tenants_tbl',
               freezeTableName: true,
               underscored: true,
               timestamps: true,
@@ -70,7 +66,7 @@ module.exports = {
           )
           .then(function () {
             const sql =
-              'CREATE INDEX tags_index_charges_tbl ON "charges_tbl"(account_tags);';
+              'CREATE INDEX tags_index_tenants_tbl ON "tenants_tbl"(tenant_tags);';
             return queryInterface.sequelize.query(sql, {
               type: Sequelize.QueryTypes.RAW,
             });
@@ -78,6 +74,6 @@ module.exports = {
       });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('charges_tbl');
+    return queryInterface.dropTable('tenants_tbl');
   },
 };

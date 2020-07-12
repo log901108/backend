@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const payments_tbl = sequelize.define(
-    'payments_tbl',
+  const charge_items_tbl = sequelize.define(
+    'charge_items_tbl',
     {
       id: {
         allowNull: false,
@@ -8,43 +8,35 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.BIGINT,
       },
-      uuid: {
-        //! used as surrogate key
+      charge_item_code: {
+        //! fk of charges_tbl
+        type: DataTypes.STRING,
         allowNull: false,
-        //primaryKey: true,
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
       },
-      account_code: {
-        type: DataTypes.INTEGER,
-      },
-      account_title: {
+      charge_item_title: {
         type: DataTypes.STRING,
       },
-      account_type: {
+      charge_item_type: {
         type: DataTypes.INTEGER,
       },
-      account_amount: {
-        type: DataTypes.BIGINT,
-      },
-      account_body: {
+      charge_item_body: {
         type: DataTypes.TEXT,
       },
-      account_tags: {
+      charge_item_tags: {
         type: DataTypes.ARRAY(DataTypes.TEXT),
       },
-      account_details: {
+      charge_item_details: {
         type: DataTypes.JSONB,
       },
       createdAt: {
         field: 'created_at',
-        allowNull: false,
         type: DataTypes.DATE,
+        allowNull: false,
       },
       updatedAt: {
         field: 'updated_at',
-        allowNull: false,
         type: DataTypes.DATE,
+        allowNull: false,
       },
       deletedAt: {
         field: 'deleted_at',
@@ -52,15 +44,16 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: 'payments_tbl',
+      tableName: 'charge_items_tbl',
       freezeTableName: true,
       underscored: true,
       timestamps: true,
       paranoid: true,
     }
   );
-  payments_tbl.associate = function (models) {
+  charge_items_tbl.associate = function (models) {
     //associations can be defined here
+    charge_items_tbl.hasMany(models.charges_tbl);
   };
-  return payments_tbl;
+  return charge_items_tbl;
 };

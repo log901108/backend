@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const payments_tbl = sequelize.define(
-    'payments_tbl',
+  const tenants_tbl = sequelize.define(
+    'tenants_tbl',
     {
       id: {
         allowNull: false,
@@ -8,43 +8,43 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.BIGINT,
       },
-      uuid: {
-        //! used as surrogate key
+      tenant_uuid: {
         allowNull: false,
         //primaryKey: true,
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
-      account_code: {
-        type: DataTypes.INTEGER,
+      room_uuid: {
+        //! FK with 호실정보
+        type: DataTypes.UUID,
       },
-      account_title: {
+      tenant_name: {
         type: DataTypes.STRING,
       },
-      account_type: {
+      tenant_type: {
         type: DataTypes.INTEGER,
       },
-      account_amount: {
-        type: DataTypes.BIGINT,
+      tenant_contact_info: {
+        type: DataTypes.STRING(15),
       },
-      account_body: {
+      tenant_address: {
         type: DataTypes.TEXT,
       },
-      account_tags: {
+      tenant_tags: {
         type: DataTypes.ARRAY(DataTypes.TEXT),
       },
-      account_details: {
+      tenant_details: {
         type: DataTypes.JSONB,
       },
       createdAt: {
         field: 'created_at',
-        allowNull: false,
         type: DataTypes.DATE,
+        allowNull: false,
       },
       updatedAt: {
         field: 'updated_at',
-        allowNull: false,
         type: DataTypes.DATE,
+        allowNull: false,
       },
       deletedAt: {
         field: 'deleted_at',
@@ -52,15 +52,18 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: 'payments_tbl',
+      tableName: 'tenants_tbl',
       freezeTableName: true,
       underscored: true,
       timestamps: true,
       paranoid: true,
     }
   );
-  payments_tbl.associate = function (models) {
+  tenants_tbl.associate = function (models) {
     //associations can be defined here
+    tenants_tbl.belongsTo(models.rooms_tbl, {
+      foreignKey: 'room_uuid',
+    });
   };
-  return payments_tbl;
+  return tenants_tbl;
 };

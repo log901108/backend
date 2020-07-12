@@ -1,6 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
-  const payments_tbl = sequelize.define(
-    'payments_tbl',
+  const rooms_tbl = sequelize.define(
+    'rooms_tbl',
+
     {
       id: {
         allowNull: false,
@@ -8,43 +9,48 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.BIGINT,
       },
-      uuid: {
-        //! used as surrogate key
+      room_uuid: {
         allowNull: false,
         //primaryKey: true,
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
-      account_code: {
+      room_code: {
         type: DataTypes.INTEGER,
       },
-      account_title: {
+      room_name: {
         type: DataTypes.STRING,
       },
-      account_type: {
+      room_type: {
         type: DataTypes.INTEGER,
       },
-      account_amount: {
-        type: DataTypes.BIGINT,
+      room_host_name: {
+        type: DataTypes.STRING,
       },
-      account_body: {
+      room_host_contact: {
+        type: DataTypes.STRING,
+      },
+      room_host_address: {
+        type: DataTypes.STRING,
+      },
+      room_address: {
         type: DataTypes.TEXT,
       },
-      account_tags: {
+      room_tags: {
         type: DataTypes.ARRAY(DataTypes.TEXT),
       },
-      account_details: {
+      room_details: {
         type: DataTypes.JSONB,
       },
       createdAt: {
         field: 'created_at',
-        allowNull: false,
         type: DataTypes.DATE,
+        allowNull: false,
       },
       updatedAt: {
         field: 'updated_at',
-        allowNull: false,
         type: DataTypes.DATE,
+        allowNull: false,
       },
       deletedAt: {
         field: 'deleted_at',
@@ -52,15 +58,16 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: 'payments_tbl',
+      tableName: 'rooms_tbl',
       freezeTableName: true,
       underscored: true,
       timestamps: true,
       paranoid: true,
     }
   );
-  payments_tbl.associate = function (models) {
+  rooms_tbl.associate = function (models) {
     //associations can be defined here
+    rooms_tbl.hasMany(models.tenants_tbl);
   };
-  return payments_tbl;
+  return rooms_tbl;
 };

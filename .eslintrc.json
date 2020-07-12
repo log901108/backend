@@ -12,7 +12,7 @@
         "browser": false,
         "node": true
     },
-    "ignorePatterns": ["node_moduels/","yarn.lock"],
+    "ignorePatterns": ["node_moduels/","yarn.lock", "models/index.js"],
     "rules": {
         "prettier/prettier": "error"
     }

@@ -1,7 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
   const journals_tbl = sequelize.define(
     'journals_tbl',
-
     {
       id: {
         allowNull: false,
