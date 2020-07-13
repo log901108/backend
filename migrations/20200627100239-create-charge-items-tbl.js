@@ -5,15 +5,11 @@ module.exports = {
       .createTable(
         'charge_items_tbl',
         {
-          id: {
+          charge_item_id: {
             allowNull: false,
             autoIncrement: true,
             primaryKey: true,
-            type: Sequelize.BIGINT,
-          },
-          charge_item_code: {
-            type: Sequelize.STRING,
-            primaryKey: true,
+            type: Sequelize.INTEGER,
           },
           charge_item_title: {
             type: Sequelize.STRING,
@@ -54,7 +50,7 @@ module.exports = {
       )
       .then(function () {
         var sql =
-          'ALTER TABLE "charge_items_tbl" ADD CONSTRAINT "charge_items_tbl_unique_index" UNIQUE ("charge_item_code");';
+          'ALTER TABLE "charge_items_tbl" ADD CONSTRAINT "charge_items_tbl_unique_index" UNIQUE ("charge_item_title");';
         return queryInterface.sequelize.query(sql, {
           type: Sequelize.QueryTypes.RAW,
         });

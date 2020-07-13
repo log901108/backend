@@ -66,7 +66,7 @@ module.exports.postCreate = async (req, res, next) => {
   if (title && body) {
     charges_tbl
       .create({
-        charge_item_code: code,
+        charge_item_id: code,
         account_title: title,
         account_body: sanitizeHtml(body, sanitizeOption),
         //account_details: userJson,

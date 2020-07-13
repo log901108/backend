@@ -20,10 +20,16 @@ module.exports = {
                 type: Sequelize.DataTypes.UUID,
                 defaultValue: Sequelize.literal('uuid_generate_v4()'),
               },
-              charge_items_tbl_id: {
+              charge_item_id: {
                 //! fk of charges_tbl
                 type: Sequelize.INTEGER,
-                allowNull: false,
+                allowNull: true,
+                references: {
+                  model: 'charge_items_tbl',
+                  key: 'charge_item_id',
+                },
+                onDelete: 'CASCADE',
+                onUpdate: 'CASCADE',
               },
               account_code: {
                 type: Sequelize.INTEGER,

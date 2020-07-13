@@ -2,16 +2,12 @@ module.exports = (sequelize, DataTypes) => {
   const charge_items_tbl = sequelize.define(
     'charge_items_tbl',
     {
-      id: {
+      charge_item_id: {
+        //! fk
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.BIGINT,
-      },
-      charge_item_code: {
-        //! fk of charges_tbl
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.INTEGER,
       },
       charge_item_title: {
         type: DataTypes.STRING,
@@ -53,7 +49,9 @@ module.exports = (sequelize, DataTypes) => {
   );
   charge_items_tbl.associate = function (models) {
     //associations can be defined here
-    charge_items_tbl.hasMany(models.charges_tbl, { onDelete: 'cascade' });
+    charge_items_tbl.hasMany(models.charges_tbl, {
+      foreignKey: 'charge_item_id',
+    });
   };
   return charge_items_tbl;
 };
