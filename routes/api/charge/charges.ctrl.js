@@ -38,6 +38,7 @@ module.exports.postCreate = async (req, res, next) => {
   var item,
     ledger,
     title,
+    room,
     type,
     amount,
     tags,
@@ -50,6 +51,9 @@ module.exports.postCreate = async (req, res, next) => {
   }
   if (req.body.title) {
     title = req.body.title;
+  }
+  if (req.body.room) {
+    room = req.body.room;
   }
   if (req.body.type) {
     type = req.body.type;
@@ -72,6 +76,7 @@ module.exports.postCreate = async (req, res, next) => {
       .create({
         charge_item_id: item,
         ledger_id: ledger,
+        room_id: room,
         account_title: title,
         account_body: sanitizeHtml(body, sanitizeOption),
         //account_details: userJson,

@@ -36,6 +36,7 @@ const sanitizeOption = {
 
 module.exports.postCreate = async (req, res, next) => {
   var charge,
+    ledger,
     title,
     type,
     amount,
@@ -43,6 +44,9 @@ module.exports.postCreate = async (req, res, next) => {
     details = null;
   if (req.body.charge) {
     charge = req.body.charge;
+  }
+  if (req.body.ledger) {
+    ledger = req.body.ledger;
   }
   if (req.body.title) {
     title = req.body.title;
@@ -67,6 +71,7 @@ module.exports.postCreate = async (req, res, next) => {
     payments_tbl
       .create({
         charge_journal_id: charge,
+        ledger_id: ledger,
         account_title: title,
         account_body: sanitizeHtml(body, sanitizeOption),
         //account_details: userJson,

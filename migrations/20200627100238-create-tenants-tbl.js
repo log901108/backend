@@ -8,7 +8,7 @@ module.exports = {
           .createTable(
             'tenants_tbl',
             {
-              id: {
+              tenant_id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
@@ -19,10 +19,6 @@ module.exports = {
                 //primaryKey: true,
                 type: Sequelize.DataTypes.UUID,
                 defaultValue: Sequelize.literal('uuid_generate_v4()'),
-              },
-              tenant_code: {
-                //! FK with 호실정보
-                type: Sequelize.DataTypes.UUID,
               },
               tenant_name: {
                 type: Sequelize.STRING,

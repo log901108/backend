@@ -8,7 +8,7 @@ module.exports = {
           .createTable(
             'rooms_tbl',
             {
-              id: {
+              room_id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
@@ -28,6 +28,17 @@ module.exports = {
               },
               room_type: {
                 type: Sequelize.INTEGER,
+              },
+              tenant_id: {
+                //! fk from charge_journal_tbl
+                type: Sequelize.BIGINT,
+                allowNull: true,
+                references: {
+                  model: 'tenants_tbl',
+                  key: 'tenant_id',
+                },
+                onDelete: 'CASCADE',
+                onUpdate: 'CASCADE',
               },
               room_host_name: {
                 type: Sequelize.STRING,

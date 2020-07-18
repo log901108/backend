@@ -24,6 +24,15 @@ module.exports = (sequelize, DataTypes) => {
           key: 'charge_journal_id',
         },
       },
+      ledger_id: {
+        //! fk from ledgers_tbl
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'ledgers_tbl',
+          key: 'ledger_id',
+        },
+      },
       account_code: {
         type: DataTypes.INTEGER,
       },
@@ -70,11 +79,12 @@ module.exports = (sequelize, DataTypes) => {
   );
   payments_tbl.associate = function (models) {
     //associations can be defined here
-    payments_tbl.belongsTo(
-      models.charges_tbl,
-      { foreignKey: { name: 'charge_journal_id', allowNull: true } }
-      //TODO cascade: https://velog.io/@josworks27/Back-end-Sequelize%EC%9D%98-cascade-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0
-    );
+    payments_tbl.belongsTo(models.charges_tbl, {
+      foreignKey: { name: 'charge_journal_id', allowNull: true },
+    });
+    payments_tbl.belongsTo(models.ledgers_tbl, {
+      foreignKey: { name: 'ledger_id', allowNull: true },
+    });
   };
   return payments_tbl;
 };

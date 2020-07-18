@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const journals_tbl = require('../../../models').journals_tbl;
-const ledgers_tbl = require('../../../models').ledgers_tbl;
+const tenants_tbl = require('../../../models').tenants_tbl;
 const { Op } = require('sequelize');
 const sanitizeHtml = require('sanitize-html');
 const JSON = require('JSON');
@@ -38,11 +37,15 @@ module.exports.postCreate = async (req, res, next) => {
   var code,
     title,
     type,
+    name,
     amount,
     tags,
     details = null;
   if (req.body.code) {
     code = req.body.code;
+  }
+  if (req.body.name) {
+    name = req.body.name;
   }
   if (req.body.title) {
     title = req.body.title;
@@ -63,11 +66,12 @@ module.exports.postCreate = async (req, res, next) => {
     details = req.body.details;
   }
   //var userJson = { created_id: req.user.uuid, created_userid: req.user.userid };
-  if (title && body) {
-    ledgers_tbl
+  if (name) {
+    tenants_tbl
       .create({
-        ledger_title: title,
-        ledger_body: sanitizeHtml(body, sanitizeOption),
+        tenant_name: name,
+        tenant_type: type,
+        //account_body: sanitizeHtml(body, sanitizeOption),
         //account_details: userJson,
       })
       .then((result) => {
@@ -95,7 +99,7 @@ module.exports.getRead = (req, res, next) => {
     const id = req.params.id;
     console.log(id);
 
-    ledgers_tbl
+    tenants_tbl
       .findByPk(id)
       .then((result) => {
         if (!result) {
@@ -119,12 +123,12 @@ module.exports.patchUpdate = async (req, res, next) => {};
 module.exports.deleteDelete = async (req, res, next) => {
   const id = req.params.id;
 
-  ledgers_tbl.findByPk(id).then((result) => {
+  tenants_tbl.findByPk(id).then((result) => {
     if (!result) {
       res.status(404).send({ success: false });
     } else {
       result.destroy({ where: { id: id } });
-      res.status(200).send({ success: true, msg: `#${id} ledger is deleted` });
+      res.status(200).send({ success: true, msg: `#${id} tenant is deleted` });
     }
   });
 };

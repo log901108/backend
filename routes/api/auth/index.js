@@ -15,6 +15,9 @@ router.get('/check2', authCtrl.getCheck2);
 /* POST users listing. */
 
 router.post('/signup', authCtrl.postSignup);
+
+//TODO
+//! login시 username으로 보내면 이상한 에러 처리해야됨
 router.post('/login', authCtrl.postLogin);
 router.post(
   '/logout',

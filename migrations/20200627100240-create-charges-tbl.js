@@ -31,6 +31,17 @@ module.exports = {
                 onDelete: 'CASCADE',
                 onUpdate: 'CASCADE',
               },
+              room_id: {
+                //! fk from ledgers_tbl
+                type: Sequelize.BIGINT,
+                allowNull: true,
+                references: {
+                  model: 'rooms_tbl',
+                  key: 'room_id',
+                },
+                onDelete: 'CASCADE',
+                onUpdate: 'CASCADE',
+              },
               ledger_id: {
                 //! fk from ledgers_tbl
                 type: Sequelize.INTEGER,

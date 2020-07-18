@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     'rooms_tbl',
 
     {
-      id: {
+      room_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -23,6 +23,17 @@ module.exports = (sequelize, DataTypes) => {
       },
       room_type: {
         type: DataTypes.INTEGER,
+      },
+      tenant_id: {
+        //! fk from tenants_tbl
+        type: DataTypes.BIGINT,
+        allowNull: true,
+        references: {
+          model: 'tenants_tbl',
+          key: 'tenant_id',
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       room_host_name: {
         type: DataTypes.STRING,
@@ -67,7 +78,12 @@ module.exports = (sequelize, DataTypes) => {
   );
   rooms_tbl.associate = function (models) {
     //associations can be defined here
-    rooms_tbl.hasMany(models.tenants_tbl);
+    rooms_tbl.hasMany(models.tenants_tbl, {
+      foreignKey: { name: 'tenant_id', allowNull: true },
+    });
+    rooms_tbl.hasMany(models.charges_tbl, {
+      foreignKey: { name: 'room_id', allowNull: true },
+    });
   };
   return rooms_tbl;
 };

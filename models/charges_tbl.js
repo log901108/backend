@@ -23,6 +23,15 @@ module.exports = (sequelize, DataTypes) => {
           key: 'charge_item_id',
         },
       },
+      room_id: {
+        //! fk from rooms_tbl
+        type: DataTypes.BIGINT,
+        allowNull: true,
+        references: {
+          model: 'rooms_tbl',
+          key: 'room_id',
+        },
+      },
       ledger_id: {
         //! fk from ledgers_tbl
         type: DataTypes.INTEGER,
@@ -81,7 +90,12 @@ module.exports = (sequelize, DataTypes) => {
     charges_tbl.belongsTo(
       models.charge_items_tbl,
       { foreignKey: { name: 'charge_item_id', allowNull: true } }
-      //TODO cascade: https://velog.io/@josworks27/Back-end-Sequelize%EC%9D%98-cascade-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0
+      //! cascade: https://velog.io/@josworks27/Back-end-Sequelize%EC%9D%98-cascade-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0
+    );
+    charges_tbl.belongsTo(
+      models.rooms_tbl,
+      { foreignKey: { name: 'room_id', allowNull: true } }
+      //! cascade: https://velog.io/@josworks27/Back-end-Sequelize%EC%9D%98-cascade-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0
     );
     charges_tbl.hasMany(models.payments_tbl, {
       foreignKey: { name: 'charge_journal_id', allowNull: true },

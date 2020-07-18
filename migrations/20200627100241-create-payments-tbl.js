@@ -31,6 +31,17 @@ module.exports = {
                 onDelete: 'CASCADE',
                 onUpdate: 'CASCADE',
               },
+              ledger_id: {
+                //! fk from ledgers_tbl
+                type: Sequelize.INTEGER,
+                allowNull: true,
+                references: {
+                  model: 'ledgers_tbl',
+                  key: 'ledger_id',
+                },
+                onDelete: 'CASCADE',
+                onUpdate: 'CASCADE',
+              },
               account_code: {
                 type: Sequelize.INTEGER,
               },

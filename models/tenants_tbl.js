@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
   const tenants_tbl = sequelize.define(
     'tenants_tbl',
     {
-      id: {
+      tenant_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -13,10 +13,6 @@ module.exports = (sequelize, DataTypes) => {
         //primaryKey: true,
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
-      },
-      room_uuid: {
-        //! FK with 호실정보
-        type: DataTypes.UUID,
       },
       tenant_name: {
         type: DataTypes.STRING,
@@ -62,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
   tenants_tbl.associate = function (models) {
     //associations can be defined here
     tenants_tbl.belongsTo(models.rooms_tbl, {
-      foreignKey: 'room_uuid',
+      foreignKey: { name: 'tenant_id', allowNull: true },
     });
   };
   return tenants_tbl;
