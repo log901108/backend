@@ -17,7 +17,7 @@ module.exports = function (passport) {
             }
           });
         } else {
-          return done(null, false, { msg: 'invalid token' });
+          return done(null, false, { msg: 'Invalid TOKEN' });
         }
       } catch (err) {
         return done(err);

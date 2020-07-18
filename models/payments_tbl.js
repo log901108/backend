@@ -8,20 +8,20 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.BIGINT,
       },
-      uuid: {
+      payment_uuid: {
         //! used as surrogate key
         allowNull: false,
         //primaryKey: true,
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
-      charge_journal_id: {
+      charge_journal_uuid: {
         //! fk from charges_tbl
-        type: DataTypes.BIGINT,
+        type: DataTypes.UUID,
         allowNull: true,
         references: {
           model: 'charges_tbl',
-          key: 'charge_journal_id',
+          key: 'charge_journal_uuid',
         },
       },
       ledger_id: {
@@ -80,7 +80,7 @@ module.exports = (sequelize, DataTypes) => {
   payments_tbl.associate = function (models) {
     //associations can be defined here
     payments_tbl.belongsTo(models.charges_tbl, {
-      foreignKey: { name: 'charge_journal_id', allowNull: true },
+      foreignKey: { name: 'charge_journal_uuid', allowNull: true },
     });
     payments_tbl.belongsTo(models.ledgers_tbl, {
       foreignKey: { name: 'ledger_id', allowNull: true },

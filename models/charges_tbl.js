@@ -5,12 +5,12 @@ module.exports = (sequelize, DataTypes) => {
       charge_journal_id: {
         allowNull: false,
         autoIncrement: true,
-        primaryKey: true,
+        //primaryKey: true,
         type: DataTypes.BIGINT,
       },
-      uuid: {
+      charge_journal_uuid: {
         allowNull: false,
-        //primaryKey: true,
+        primaryKey: true,
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
@@ -98,7 +98,7 @@ module.exports = (sequelize, DataTypes) => {
       //! cascade: https://velog.io/@josworks27/Back-end-Sequelize%EC%9D%98-cascade-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0
     );
     charges_tbl.hasMany(models.payments_tbl, {
-      foreignKey: { name: 'charge_journal_id', allowNull: true },
+      foreignKey: { name: 'charge_journal_uuid', allowNull: true },
     });
   };
   return charges_tbl;

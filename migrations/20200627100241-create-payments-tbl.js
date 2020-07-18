@@ -14,19 +14,19 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.BIGINT,
               },
-              uuid: {
+              payment_uuid: {
                 allowNull: false,
                 //primaryKey: true,
                 type: Sequelize.DataTypes.UUID,
                 defaultValue: Sequelize.literal('uuid_generate_v4()'),
               },
-              charge_journal_id: {
+              charge_journal_uuid: {
                 //! fk from charge_journal_tbl
-                type: Sequelize.BIGINT,
+                type: Sequelize.DataTypes.UUID,
                 allowNull: true,
                 references: {
                   model: 'charges_tbl',
-                  key: 'charge_journal_id',
+                  key: 'charge_journal_uuid',
                 },
                 onDelete: 'CASCADE',
                 onUpdate: 'CASCADE',

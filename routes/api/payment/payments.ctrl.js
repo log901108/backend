@@ -70,7 +70,7 @@ module.exports.postCreate = async (req, res, next) => {
   if (title && body) {
     payments_tbl
       .create({
-        charge_journal_id: charge,
+        charge_journal_uuid: charge,
         ledger_id: ledger,
         account_title: title,
         account_body: sanitizeHtml(body, sanitizeOption),

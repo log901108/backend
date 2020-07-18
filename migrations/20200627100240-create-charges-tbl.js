@@ -11,12 +11,12 @@ module.exports = {
               charge_journal_id: {
                 allowNull: false,
                 autoIncrement: true,
-                primaryKey: true,
+                //primaryKey: true,
                 type: Sequelize.BIGINT,
               },
-              uuid: {
+              charge_journal_uuid: {
                 allowNull: false,
-                //primaryKey: true,
+                primaryKey: true,
                 type: Sequelize.DataTypes.UUID,
                 defaultValue: Sequelize.literal('uuid_generate_v4()'),
               },
