@@ -41,7 +41,7 @@ module.exports.postCreate = async (req, res, next) => {
     amount,
     tags,
     details = null;
-  if (req.body.code) {
+  if (req.body.charge) {
     charge = req.body.charge;
   }
   if (req.body.title) {
