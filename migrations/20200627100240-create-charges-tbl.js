@@ -8,7 +8,7 @@ module.exports = {
           .createTable(
             'charges_tbl',
             {
-              id: {
+              charge_journal_id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
@@ -21,12 +21,23 @@ module.exports = {
                 defaultValue: Sequelize.literal('uuid_generate_v4()'),
               },
               charge_item_id: {
-                //! fk of charges_tbl
+                //! fk from charge_items_tbl
                 type: Sequelize.INTEGER,
                 allowNull: true,
                 references: {
                   model: 'charge_items_tbl',
                   key: 'charge_item_id',
+                },
+                onDelete: 'CASCADE',
+                onUpdate: 'CASCADE',
+              },
+              ledger_id: {
+                //! fk from ledgers_tbl
+                type: Sequelize.INTEGER,
+                allowNull: true,
+                references: {
+                  model: 'ledgers_tbl',
+                  key: 'ledger_id',
                 },
                 onDelete: 'CASCADE',
                 onUpdate: 'CASCADE',

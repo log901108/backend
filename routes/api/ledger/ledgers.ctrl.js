@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const journals_tbl = require('../../../models').journals_tbl;
-const charges_tbl = require('../../../models').charges_tbl;
+const ledgers_tbl = require('../../../models').ledgers_tbl;
 const { Op } = require('sequelize');
 const sanitizeHtml = require('sanitize-html');
 const JSON = require('JSON');
@@ -35,18 +35,14 @@ const sanitizeOption = {
 };
 
 module.exports.postCreate = async (req, res, next) => {
-  var item,
-    ledger,
+  var code,
     title,
     type,
     amount,
     tags,
     details = null;
-  if (req.body.item) {
-    item = req.body.item;
-  }
-  if (req.body.ledger) {
-    ledger = req.body.ledger;
+  if (req.body.code) {
+    code = req.body.code;
   }
   if (req.body.title) {
     title = req.body.title;
@@ -68,10 +64,8 @@ module.exports.postCreate = async (req, res, next) => {
   }
   //var userJson = { created_id: req.user.uuid, created_userid: req.user.userid };
   if (title && body) {
-    charges_tbl
+    ledgers_tbl
       .create({
-        charge_item_id: item,
-        ledger_id: ledger,
         account_title: title,
         account_body: sanitizeHtml(body, sanitizeOption),
         //account_details: userJson,
@@ -101,7 +95,7 @@ module.exports.getRead = (req, res, next) => {
     const id = req.params.id;
     console.log(id);
 
-    charges_tbl
+    ledgers_tbl
       .findByPk(id)
       .then((result) => {
         if (!result) {
@@ -125,12 +119,12 @@ module.exports.patchUpdate = async (req, res, next) => {};
 module.exports.deleteDelete = async (req, res, next) => {
   const id = req.params.id;
 
-  charges_tbl.findByPk(id).then((result) => {
+  ledgers_tbl.findByPk(id).then((result) => {
     if (!result) {
       res.status(404).send({ success: false });
     } else {
       result.destroy({ where: { id: id } });
-      res.status(200).send({ success: true, msg: `#${id} charge is deleted` });
+      res.status(200).send({ success: true, msg: `#${id} ledger is deleted` });
     }
   });
 };

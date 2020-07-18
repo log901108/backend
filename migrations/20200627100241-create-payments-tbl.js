@@ -8,7 +8,7 @@ module.exports = {
           .createTable(
             'payments_tbl',
             {
-              id: {
+              payment_journal_id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
@@ -19,6 +19,17 @@ module.exports = {
                 //primaryKey: true,
                 type: Sequelize.DataTypes.UUID,
                 defaultValue: Sequelize.literal('uuid_generate_v4()'),
+              },
+              charge_journal_id: {
+                //! fk from charge_journal_tbl
+                type: Sequelize.BIGINT,
+                allowNull: true,
+                references: {
+                  model: 'charges_tbl',
+                  key: 'charge_journal_id',
+                },
+                onDelete: 'CASCADE',
+                onUpdate: 'CASCADE',
               },
               account_code: {
                 type: Sequelize.INTEGER,

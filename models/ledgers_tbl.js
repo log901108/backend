@@ -1,27 +1,27 @@
 module.exports = (sequelize, DataTypes) => {
-  const charge_items_tbl = sequelize.define(
-    'charge_items_tbl',
+  const ledgers_tbl = sequelize.define(
+    'ledgers_tbl',
     {
-      charge_item_id: {
+      ledger_id: {
         //! fk
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      charge_item_title: {
+      ledger_title: {
         type: DataTypes.STRING,
       },
-      charge_item_type: {
+      ledger_type: {
         type: DataTypes.INTEGER,
       },
-      charge_item_body: {
+      ledger_body: {
         type: DataTypes.TEXT,
       },
-      charge_item_tags: {
+      ledger_tags: {
         type: DataTypes.ARRAY(DataTypes.TEXT),
       },
-      charge_item_details: {
+      ledger_details: {
         type: DataTypes.JSONB,
       },
       createdAt: {
@@ -40,18 +40,18 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: 'charge_items_tbl',
+      tableName: 'ledgers_tbl',
       freezeTableName: true,
       underscored: true,
       timestamps: true,
       paranoid: true,
     }
   );
-  charge_items_tbl.associate = function (models) {
+  ledgers_tbl.associate = function (models) {
     //associations can be defined here
-    charge_items_tbl.hasMany(models.charges_tbl, {
-      foreignKey: { name: 'charge_item_id', allowNull: true },
+    ledgers_tbl.hasMany(models.charges_tbl, {
+      foreignKey: { name: 'ledger_id', allowNull: true },
     });
   };
-  return charge_items_tbl;
+  return ledgers_tbl;
 };

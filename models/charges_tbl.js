@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
   const charges_tbl = sequelize.define(
     'charges_tbl',
     {
-      id: {
+      charge_journal_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -15,12 +15,21 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: DataTypes.UUIDV4,
       },
       charge_item_id: {
-        //! fk of charges_tbl
-        type: DataTypes.STRING,
+        //! fk from charge_items_tbl
+        type: DataTypes.INTEGER,
         allowNull: true,
         references: {
           model: 'charge_items_tbl',
           key: 'charge_item_id',
+        },
+      },
+      ledger_id: {
+        //! fk from ledgers_tbl
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'ledgers_tbl',
+          key: 'ledger_id',
         },
       },
       account_code: {
@@ -71,9 +80,12 @@ module.exports = (sequelize, DataTypes) => {
     //associations can be defined here
     charges_tbl.belongsTo(
       models.charge_items_tbl,
-      { foreignKey: 'charge_item_id' }
+      { foreignKey: { name: 'charge_item_id', allowNull: true } }
       //TODO cascade: https://velog.io/@josworks27/Back-end-Sequelize%EC%9D%98-cascade-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0
     );
+    charges_tbl.hasMany(models.payments_tbl, {
+      foreignKey: { name: 'charge_journal_id', allowNull: true },
+    });
   };
   return charges_tbl;
 };

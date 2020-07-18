@@ -35,14 +35,14 @@ const sanitizeOption = {
 };
 
 module.exports.postCreate = async (req, res, next) => {
-  var code,
+  var charge,
     title,
     type,
     amount,
     tags,
     details = null;
   if (req.body.code) {
-    code = req.body.code;
+    charge = req.body.charge;
   }
   if (req.body.title) {
     title = req.body.title;
@@ -66,6 +66,7 @@ module.exports.postCreate = async (req, res, next) => {
   if (title && body) {
     payments_tbl
       .create({
+        charge_journal_id: charge,
         account_title: title,
         account_body: sanitizeHtml(body, sanitizeOption),
         //account_details: userJson,
