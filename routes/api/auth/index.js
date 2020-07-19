@@ -16,14 +16,17 @@ router.get('/check2', authCtrl.getCheck2);
 
 router.post('/signup', authCtrl.postSignup);
 
-//TODO
-//! login시 username으로 보내면 이상한 에러 처리해야됨
 router.post('/login', authCtrl.postLogin);
+
 router.post(
   '/logout',
   passport.authenticate('bearer', { session: false, failWithError: true }),
   authCtrl.postLogout
 );
+
+//! API for Issue Access Token by refresh token at cookies
+router.post('/token', mcheckrefresh, authCtrl.postCreatetoken);
+
 router.post('/post', authCtrl.transaction);
 
 router.delete(
@@ -33,6 +36,7 @@ router.delete(
   passport.authenticate('bearer', { session: false, failWithError: true }),
   authCtrl.deleteDelete
 );
+
 router.patch(
   '/update/:uuid',
   mcheckcache,

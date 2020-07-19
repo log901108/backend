@@ -221,7 +221,7 @@ module.exports.postLogin = function (req, res, next) {
         }
       });
     })
-    .catch((err) => res.status(400).send(err));
+    .catch((err) => res.status(400).send({ success: false, error: err }));
 };
 
 //post router for logout
@@ -269,6 +269,38 @@ module.exports.getCheck = async function (req, res) {
     res.status(401).send({ success: false, msg: 'Unauthorized' });
   } else {
     res.status(200).send(user);
+  }
+};
+
+//! Issue Access Token by Refresh Token
+module.exports.postCreatetoken = async function (req, res, next) {
+  var token = null;
+  if (req && req.cookies) token = req.cookies.token;
+  if (!token) {
+    return next();
+  } else {
+    try {
+      var date = Math.floor(new Date() / 1000); //TODO 초까지만 나오는 방법 알아서 제대로 고치기
+      var access = await jwt.sign(
+        {
+          uuid: req.user.uuid,
+          userid: req.user.userid,
+          signinDate: req.user.signinDate,
+          iat: date,
+          exp: date + process.env.JWTACCESSTOKENMINUTE * 60,
+        },
+        process.env.JWTSECRET,
+        (err, data) => {
+          if (err) {
+            return res.status(400).send({ success: false, error: err });
+          }
+          req.accesstoken = data;
+        }
+      );
+      return res.status(200).send({ success: true, data: req.accesstoken });
+    } catch (e) {
+      return res.status(400).send({ success: false, error: err });
+    }
   }
 };
 
