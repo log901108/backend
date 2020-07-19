@@ -100,6 +100,12 @@ module.exports = (sequelize, DataTypes) => {
     charges_tbl.hasMany(models.payments_tbl, {
       foreignKey: { name: 'charge_journal_uuid', allowNull: true },
     });
+    charges_tbl.belongsToMany(models.payments_tbl, {
+      through: 'Follow',
+      as: 'Followers', // 같은 테이블 끼리 다대다관계이면 구별을 위해 as로 구별. JavaScript 객체에서 사용할 이름
+      foreignKey: 'followingId', // DB 컬럼명: 반대로 쓰는 이유는 foreignKey가 남의 테이블 id를 가리키기 때문
+      otherKey: 'followerId',
+    });
   };
   return charges_tbl;
 };

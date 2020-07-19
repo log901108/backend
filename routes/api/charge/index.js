@@ -11,6 +11,7 @@ router.get('/item/:id', mcheckchache, chargeitemsCtrls.getRead);
 router.delete('/item/:id', chargeitemsCtrls.deleteDelete);
 
 router.post('/journal', chargesCtrls.postCreate);
+router.get('/journal/', mcheckchache, chargesCtrls.getList);
 router.get('/journal/:id', mcheckchache, chargesCtrls.getRead);
 router.delete('/journal/:id', chargesCtrls.deleteDelete);
 

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const journals_tbl = require('../../../models').journals_tbl;
 const charges_tbl = require('../../../models').charges_tbl;
+const payments_tbl = require('../../../models').payments_tbl;
 const { Op } = require('sequelize');
 const sanitizeHtml = require('sanitize-html');
 const JSON = require('JSON');
@@ -84,6 +85,7 @@ module.exports.postCreate = async (req, res, next) => {
       .then((result) => {
         console.log(req.user);
         console.log(req.accesstoken);
+        //TODO access token 재발급 해주는 걸 api하나로 몰아야 할지 결정
         res.status(200).send({ token: req.accesstoken, data: result });
       })
       .catch((err) => {
@@ -94,6 +96,35 @@ module.exports.postCreate = async (req, res, next) => {
       success: false,
       msg: 'one or more required contents are missing',
     });
+  }
+};
+
+module.exports.getList = async (req, res, next) => {
+  try {
+    var objectId = req.originalUrl;
+    charges_tbl
+      .findAll({
+        //include: [
+        //  {
+        //    model: payments_tbl,
+        //    through: {
+        //      //attributes: ['followerId'],
+        //    },
+        //  },
+        //],
+        include: [payments_tbl],
+        order: [['charge_journal_id', 'ASC']],
+      })
+      .then((result) => {
+        req.client.setex(
+          objectId,
+          100,
+          JSON.stringify({ success: true, data: result })
+        );
+        res.status(200).send({ success: true, data: result });
+      });
+  } catch (err) {
+    res.status(400).send({ success: false, error: err });
   }
 };
 
