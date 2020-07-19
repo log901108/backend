@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 const journals_tbl = require('../../../models').journals_tbl;
 const payments_tbl = require('../../../models').payments_tbl;
+const charges_tbl = require('../../../models').charges_tbl;
+const chargepayment_tbl = require('../../../models').chargepayment_tbl;
 const { Op } = require('sequelize');
 const sanitizeHtml = require('sanitize-html');
 const JSON = require('JSON');
@@ -70,7 +72,7 @@ module.exports.postCreate = async (req, res, next) => {
   if (title && body) {
     payments_tbl
       .create({
-        charge_journal_uuid: charge,
+        charge_journal_id: charge,
         ledger_id: ledger,
         account_title: title,
         account_body: sanitizeHtml(body, sanitizeOption),
@@ -79,11 +81,17 @@ module.exports.postCreate = async (req, res, next) => {
       .then((result) => {
         console.log(req.user);
         console.log(req.accesstoken);
+        chargepayment_tbl.create({
+          charge_journal_id: charge,
+          payment_journal_id: result.payment_journal_id,
+        });
         res.status(200).send({ token: req.accesstoken, data: result });
       })
       .catch((err) => {
         res.status(400).send({ err });
       });
+
+    //await payments_tbl.addcharges_tbl()
   } else {
     res.status(400).send({
       success: false,
@@ -117,6 +125,40 @@ module.exports.getRead = (req, res, next) => {
   } catch (err) {
     console.log(err);
     return res.status(500).send({ success: false, err: err });
+  }
+};
+
+module.exports.getList = async (req, res, next) => {
+  try {
+    var objectId = req.originalUrl;
+    payments_tbl
+      .findAll({
+        //include: [
+        //  {
+        //    model: payments_tbl,
+        //    through: {
+        //      //attributes: ['followerId'],
+        //    },
+        //  },
+        //],
+        include: [
+          {
+            model: charges_tbl,
+            //through: { attributes: [] },
+          },
+        ],
+        //order: [['charge_journal_id', 'ASC']],
+      })
+      .then((result) => {
+        req.client.setex(
+          objectId,
+          10,
+          JSON.stringify({ success: true, data: result })
+        );
+        res.status(200).send({ success: true, data: result });
+      });
+  } catch (err) {
+    res.status(400).send({ success: false, error: err });
   }
 };
 

@@ -3,6 +3,7 @@ var router = express.Router();
 const journals_tbl = require('../../../models').journals_tbl;
 const charges_tbl = require('../../../models').charges_tbl;
 const payments_tbl = require('../../../models').payments_tbl;
+const chargepayment_tbl = require('../../../models').chargepayment_tbl;
 const { Op } = require('sequelize');
 const sanitizeHtml = require('sanitize-html');
 const JSON = require('JSON');
@@ -73,6 +74,10 @@ module.exports.postCreate = async (req, res, next) => {
   }
   //var userJson = { created_id: req.user.uuid, created_userid: req.user.userid };
   if (title && body) {
+    chargepayment_tbl.create({
+      charge_journal_id: 1,
+      payment_journal_id: 2,
+    });
     charges_tbl
       .create({
         charge_item_id: item,
@@ -82,7 +87,7 @@ module.exports.postCreate = async (req, res, next) => {
         account_body: sanitizeHtml(body, sanitizeOption),
         //account_details: userJson,
       })
-      .then((result) => {
+      .then(async (result) => {
         console.log(req.user);
         console.log(req.accesstoken);
         //TODO access token 재발급 해주는 걸 api하나로 몰아야 할지 결정

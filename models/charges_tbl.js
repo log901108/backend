@@ -5,12 +5,12 @@ module.exports = (sequelize, DataTypes) => {
       charge_journal_id: {
         allowNull: false,
         autoIncrement: true,
-        //primaryKey: true,
+        primaryKey: true,
         type: DataTypes.BIGINT,
       },
       charge_journal_uuid: {
         allowNull: false,
-        primaryKey: true,
+        //primaryKey: true,
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
@@ -87,24 +87,24 @@ module.exports = (sequelize, DataTypes) => {
   );
   charges_tbl.associate = function (models) {
     //associations can be defined here
-    charges_tbl.belongsTo(
-      models.charge_items_tbl,
-      { foreignKey: { name: 'charge_item_id', allowNull: true } }
-      //! cascade: https://velog.io/@josworks27/Back-end-Sequelize%EC%9D%98-cascade-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0
-    );
-    charges_tbl.belongsTo(
-      models.rooms_tbl,
-      { foreignKey: { name: 'room_id', allowNull: true } }
-      //! cascade: https://velog.io/@josworks27/Back-end-Sequelize%EC%9D%98-cascade-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0
-    );
-    charges_tbl.hasMany(models.payments_tbl, {
-      foreignKey: { name: 'charge_journal_uuid', allowNull: true },
-    });
+    //charges_tbl.belongsTo(
+    //  models.charge_items_tbl,
+    //  { foreignKey: { name: 'charge_item_id', allowNull: true } }
+    //  //! cascade: https://velog.io/@josworks27/Back-end-Sequelize%EC%9D%98-cascade-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0
+    //);
+    //charges_tbl.belongsTo(
+    //  models.rooms_tbl,
+    //  { foreignKey: { name: 'room_id', allowNull: true } }
+    //  //! cascade: https://velog.io/@josworks27/Back-end-Sequelize%EC%9D%98-cascade-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0
+    //);
+    //charges_tbl.hasMany(models.payments_tbl, {
+    //  foreignKey: { name: 'charge_journal_uuid', allowNull: true },
+    //});
     charges_tbl.belongsToMany(models.payments_tbl, {
-      through: 'Follow',
-      as: 'Followers', // 같은 테이블 끼리 다대다관계이면 구별을 위해 as로 구별. JavaScript 객체에서 사용할 이름
-      foreignKey: 'followingId', // DB 컬럼명: 반대로 쓰는 이유는 foreignKey가 남의 테이블 id를 가리키기 때문
-      otherKey: 'followerId',
+      through: 'chargepayment_tbl',
+      //as: 'Followers', // 같은 테이블 끼리 다대다관계이면 구별을 위해 as로 구별. JavaScript 객체에서 사용할 이름
+      foreignKey: 'payment_journal_id', // DB 컬럼명: 반대로 쓰는 이유는 foreignKey가 남의 테이블 id를 가리키기 때문
+      otherKey: 'charge_journal_id',
     });
   };
   return charges_tbl;
