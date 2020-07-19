@@ -24,7 +24,7 @@ router.post(
   authCtrl.postLogout
 );
 
-//! API for Issue Access Token by refresh token at cookies
+//! API for Issue Access Token by refresh token at cookie
 router.post('/token', mcheckrefresh, authCtrl.postCreatetoken);
 
 router.post('/post', authCtrl.transaction);
