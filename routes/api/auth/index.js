@@ -4,18 +4,10 @@ const authCtrl = require('./auth.ctrl');
 const passport = require('passport');
 require('../../../config/passport')(passport);
 
+const wrapper = require('../../../lib/asyncwrapper');
+
 const mcheckcache = require('./middle/mcheckcache');
 const mcheckrefresh = require('./middle/mcheckrefresh');
-
-const wrapper = (asyncFn) => {
-  return async (req, res, next) => {
-    try {
-      return await asyncFn(req, res, next);
-    } catch (err) {
-      return next(err);
-    }
-  };
-};
 
 router.get('/', authCtrl.getList);
 router.get('/info/:uuid', mcheckcache, authCtrl.getInfo);

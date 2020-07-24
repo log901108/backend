@@ -3,17 +3,8 @@ var router = express.Router();
 
 const paymentsCtrls = require('./payments.ctrl');
 
+const wrapper = require('../../../lib/asyncwrapper');
 const mcheckcache = require('../auth/middle/mcheckcache');
-
-const wrapper = (asyncFn) => {
-  return async (req, res, next) => {
-    try {
-      return await asyncFn(req, res, next);
-    } catch (err) {
-      return next(err);
-    }
-  };
-};
 
 router.post('/', wrapper(paymentsCtrls.postCreate));
 router.get('/:id', mcheckcache, wrapper(paymentsCtrls.getRead));

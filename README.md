@@ -22,4 +22,7 @@ This is repository for OC backend.<br/>
 -
 
 ## IDEA
-- charges_tbl 및 payments_tbl 을 따로 만들고 각각 journals을 keep하도록 만든다. 
+- charges_tbl 및 payments_tbl 을 따로 만들고 각각 journals을 keep하도록 만든다. </br>
+
+## Async / Await
+- if you hope to use async / await pattern in Express.js, you need to use wrapper for pretend functions. Promise return is required to make delay until await function finish its work. </br> 
