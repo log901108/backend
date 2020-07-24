@@ -7,7 +7,7 @@ module.exports = {
     password: process.env.DBPASSWD,
     database: process.env.DBNAME,
     host: process.env.DBHOST,
-    dialect: 'postgres',
+    dialect: process.env.DBDIALECT,
     pool: {
       max: 5,
       min: 0,
@@ -19,7 +19,7 @@ module.exports = {
     password: process.env.DBPASSWD,
     database: process.env.DBNAME,
     host: process.env.DBHOST,
-    dialect: 'postgres',
+    dialect: process.env.DBDIALECT,
     pool: {
       max: 5,
       min: 0,
@@ -31,7 +31,7 @@ module.exports = {
     password: process.env.DBPASSWD,
     database: process.env.DBNAME,
     host: process.env.DBHOST,
-    dialect: 'postgres',
+    dialect: process.env.DBDIALECT,
     pool: {
       max: 5,
       min: 0,

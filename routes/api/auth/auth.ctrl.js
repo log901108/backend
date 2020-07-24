@@ -54,12 +54,12 @@ passwordValidator = (password) => {
 };
 
 //post router function for signup
-module.exports.postSignup = function (req, res) {
+module.exports.postSignup = async function (req, res) {
   if (!req.body.userid || !req.body.username || !req.body.password) {
-    res.status(400).send({ msg: 'Please pass username and password.' });
+    return res.status(400).send({ msg: 'Please pass username and password.' });
   } else {
     if (passwordValidator(req.body.password)) {
-      users_tbl
+      await users_tbl
         .create({
           userid: req.body.userid,
           username: req.body.username,
@@ -80,10 +80,10 @@ module.exports.postSignup = function (req, res) {
             user.userid,
             86400 * process.env.REFRESHTOKENDAY
           ); //! 14days
-          user.UpdateClearLoginFailCount(user.userid);
-          user.UpdateLoginIp(req, req.body.userid);
-          user.UpdateloginTrialDate(req.body.userid);
-          user.UpdateLoginDate(req.body.userid);
+          await user.UpdateClearLoginFailCount(user.userid);
+          await user.UpdateLoginIp(req, req.body.userid);
+          await user.UpdateloginTrialDate(req.body.userid);
+          await user.UpdateLoginDate(req.body.userid);
 
           var AccessToken = await jwt.sign(
             JSON.parse(
@@ -114,7 +114,7 @@ module.exports.postSignup = function (req, res) {
             ),
           });
 
-          res
+          return res
             .status(201)
             .send({ success: true, user: user, token: AccessToken });
         })
@@ -122,9 +122,11 @@ module.exports.postSignup = function (req, res) {
           console.log(err);
           if (err.parent.code == 23505) {
             //unique constraint error
-            res.status(409).send({ msg: 'already exists id', error: err });
+            return res
+              .status(409)
+              .send({ message: 'already exists id', error: err });
           } else {
-            res.status(400).send({ msg: 'commit db error' });
+            return res.status(400).send({ message: 'commit db error' });
           }
         });
     } else {
