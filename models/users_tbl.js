@@ -108,7 +108,7 @@ module.exports = (sequelize, DataTypes) => {
 
   //the instance method which increase login trial error count when login failed
   users_tbl.prototype.PlusLoginFailCount = function (user) {
-    this.increment(
+    return this.increment(
       { login_fail_count: 1 },
       {
         where: { userid: user.body.userid },
@@ -135,7 +135,7 @@ module.exports = (sequelize, DataTypes) => {
 
   //the instance method which update try_login_date
   users_tbl.prototype.UpdateloginTrialDate = function (user) {
-    this.update(
+    return this.update(
       {
         try_login_date: new Date(),
       },
@@ -157,7 +157,7 @@ module.exports = (sequelize, DataTypes) => {
 
   //the instance method which update is_admin by false
   users_tbl.prototype.UpdateAdminFalse = function (user) {
-    this.update(
+    return this.update(
       {
         is_admin: false,
       },
@@ -167,7 +167,7 @@ module.exports = (sequelize, DataTypes) => {
 
   //the instance method update latest_login_date
   users_tbl.prototype.UpdateLoginDate = function (user) {
-    this.update(
+    return this.update(
       {
         latest_login_date: new Date(),
       },
@@ -177,7 +177,7 @@ module.exports = (sequelize, DataTypes) => {
 
   //the instance method update login_ip
   users_tbl.prototype.UpdateLoginIp = function (client, user) {
-    this.update(
+    return this.update(
       {
         login_ip: requestIp.getClientIp(client),
       },
@@ -192,7 +192,7 @@ module.exports = (sequelize, DataTypes) => {
 
   //the instance method clear login_fail_count by 0 and is_account_lock as false
   users_tbl.prototype.UpdateClearLoginFailCount = function (user) {
-    this.update(
+    return this.update(
       {
         login_fail_count: 0,
         is_account_lock: false,
@@ -203,7 +203,7 @@ module.exports = (sequelize, DataTypes) => {
 
   //the instance method clear lock_count by 0
   users_tbl.prototype.UpdateClearLockCount = function (user) {
-    this.update(
+    return this.update(
       {
         lock_count: 0,
       },
@@ -224,14 +224,14 @@ module.exports = (sequelize, DataTypes) => {
       expiresIn: expiretime,
     });
 
-    this.update(
+    return this.update(
       {
         refresh_token: RefreshToken,
       },
       { where: { userid: user } }
-    );
-
-    return RefreshToken;
+    ).then(() => {
+      return RefreshToken;
+    });
   };
 
   users_tbl.associate = function (models) {

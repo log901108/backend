@@ -135,15 +135,15 @@ module.exports.postSignup = function (req, res) {
 };
 
 //post router function for login
-module.exports.postLogin = function (req, res, next) {
-  signin_trial_tbl.create({
+module.exports.postLogin = async function (req, res, next) {
+  await signin_trial_tbl.create({
     requested_userid: req.body.userid,
     requested_password: req.body.password,
     trial_time: Date.now(),
     trial_ip: requestIp.getClientIp(req),
   });
 
-  users_tbl
+  return users_tbl
     .findOne({
       where: {
         userid: req.body.userid,
@@ -176,10 +176,10 @@ module.exports.postLogin = function (req, res, next) {
               req.body.userid,
               86400 * process.env.REFRESHTOKENDAY //! 14days
             );
-            user.UpdateClearLoginFailCount(req);
-            user.UpdateLoginIp(req, req.body.userid);
-            user.UpdateloginTrialDate(req.body.userid);
-            user.UpdateLoginDate(req.body.userid);
+            await user.UpdateClearLoginFailCount(req);
+            await user.UpdateLoginIp(req, req.body.userid);
+            await user.UpdateloginTrialDate(req.body.userid);
+            await user.UpdateLoginDate(req.body.userid);
 
             //4.Issue Access Token
             var AccessToken = await jwt.sign(
@@ -204,7 +204,7 @@ module.exports.postLogin = function (req, res, next) {
             });
 
             //6.Response with json
-            res.status(200).send({
+            return res.status(200).send({
               success: true,
               token: AccessToken,
               userid: user.userid,
@@ -213,8 +213,8 @@ module.exports.postLogin = function (req, res, next) {
           }
         } else {
           //isMatch == dismatched passwd
-          user.PlusLoginFailCount(req);
-          res.status(401).send({
+          await user.PlusLoginFailCount(req);
+          return res.status(401).send({
             success: false,
             msg: 'Authentication failed. Wrong password',
           });
@@ -280,14 +280,14 @@ module.exports.postCreatetoken = async function (req, res, next) {
     return next();
   } else {
     try {
-      var date = Math.floor(new Date() / 1000); //TODO 초까지만 나오는 방법 알아서 제대로 고치기
+      var current_time = (new Date() / 1000) | 0; //TODO 초까지만 나오는 방법 알아서 제대로 고치기
       var access = await jwt.sign(
         {
           uuid: req.user.uuid,
           userid: req.user.userid,
           signinDate: req.user.signinDate,
-          iat: date,
-          exp: date + process.env.JWTACCESSTOKENMINUTE * 60,
+          iat: current_time,
+          exp: current_time + process.env.JWTACCESSTOKENMINUTE * 60,
         },
         process.env.JWTSECRET,
         (err, data) => {

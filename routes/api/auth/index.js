@@ -7,6 +7,16 @@ require('../../../config/passport')(passport);
 const mcheckcache = require('./middle/mcheckcache');
 const mcheckrefresh = require('./middle/mcheckrefresh');
 
+const wrapper = (asyncFn) => {
+  return async (req, res, next) => {
+    try {
+      return await asyncFn(req, res, next);
+    } catch (err) {
+      return next(err);
+    }
+  };
+};
+
 router.get('/', authCtrl.getList);
 router.get('/info/:uuid', mcheckcache, authCtrl.getInfo);
 router.get('/check', authCtrl.getCheck);
@@ -16,7 +26,7 @@ router.get('/check2', authCtrl.getCheck2);
 
 router.post('/signup', authCtrl.postSignup);
 
-router.post('/login', authCtrl.postLogin);
+router.post('/login', wrapper(authCtrl.postLogin));
 
 router.post(
   '/logout',

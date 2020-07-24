@@ -8,14 +8,14 @@ module.exports = async (req, res, next) => {
     return next();
   } else {
     try {
-      var date = Math.floor(new Date() / 1000); //TODO 초까지만 나오는 방법 알아서 제대로 고치기
+      var current_time = (new Date() / 1000) | 0; //TODO 초까지만 나오는 방법 알아서 제대로 고치기
       var access = await jwt.sign(
         {
           uuid: req.user.uuid,
           userid: req.user.userid,
           signinDate: req.user.signinDate,
-          iat: date,
-          exp: date + process.env.JWTACCESSTOKENMINUTE * 60,
+          iat: current_time,
+          exp: current_time + process.env.JWTACCESSTOKENMINUTE * 60,
         },
         process.env.JWTSECRET,
         (err, data) => {

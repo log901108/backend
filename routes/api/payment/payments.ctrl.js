@@ -70,7 +70,7 @@ module.exports.postCreate = async (req, res, next) => {
   }
   //var userJson = { created_id: req.user.uuid, created_userid: req.user.userid };
   if (title && body) {
-    payments_tbl
+    return payments_tbl
       .create({
         charge_journal_id: charge,
         ledger_id: ledger,
@@ -85,10 +85,10 @@ module.exports.postCreate = async (req, res, next) => {
           charge_journal_id: charge,
           payment_journal_id: result.payment_journal_id,
         });
-        res.status(200).send({ token: req.accesstoken, data: result });
+        return res.status(200).send({ token: req.accesstoken, data: result });
       })
       .catch((err) => {
-        res.status(400).send({ err });
+        return res.status(400).send({ success: false, message: err });
       });
 
     //await payments_tbl.addcharges_tbl()
@@ -101,37 +101,32 @@ module.exports.postCreate = async (req, res, next) => {
 };
 
 module.exports.getRead = (req, res, next) => {
+  const path = req.originalUrl;
+  const url = req.url;
+  const id = req.params.id;
   try {
-    const path = req.originalUrl;
-    console.log(path);
-    const url = req.url;
-    console.log(url);
-    const id = req.params.id;
-    console.log(id);
-
-    payments_tbl
+    return payments_tbl
       .findByPk(id)
       .then((result) => {
         if (!result) {
           res.status(404).send({ success: false });
         } else {
           req.client.setex(path, 100, JSON.stringify(result));
-          res.status(200).send(result);
+          return res.status(200).send(result);
         }
       })
       .catch((err) => {
-        res.status(400).send({ success: false, error: err });
+        return res.status(400).send({ success: false, error: err });
       });
   } catch (err) {
-    console.log(err);
-    return res.status(500).send({ success: false, err: err });
+    return res.status(400).send({ success: false, error: err });
   }
 };
 
 module.exports.getList = async (req, res, next) => {
   try {
     var objectId = req.originalUrl;
-    payments_tbl
+    return payments_tbl
       .findAll({
         //include: [
         //  {
@@ -155,10 +150,10 @@ module.exports.getList = async (req, res, next) => {
           10,
           JSON.stringify({ success: true, data: result })
         );
-        res.status(200).send({ success: true, data: result });
+        return res.status(200).send({ success: true, data: result });
       });
   } catch (err) {
-    res.status(400).send({ success: false, error: err });
+    return res.status(400).send({ success: false, error: err });
   }
 };
 
@@ -167,12 +162,14 @@ module.exports.patchUpdate = async (req, res, next) => {};
 module.exports.deleteDelete = async (req, res, next) => {
   const id = req.params.id;
 
-  payments_tbl.findByPk(id).then((result) => {
+  return payments_tbl.findByPk(id).then((result) => {
     if (!result) {
-      res.status(404).send({ success: false });
+      return res.status(404).send({ success: false });
     } else {
       result.destroy({ where: { id: id } });
-      res.status(200).send({ success: true, msg: `#${id} payment is deleted` });
+      return res
+        .status(200)
+        .send({ success: true, message: `#${id} payment is deleted` });
     }
   });
 };
