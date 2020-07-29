@@ -3,7 +3,7 @@ var router = express.Router();
 
 const paymentsCtrls = require('./payments.ctrl');
 
-const wrapper = require('../../../lib/asyncwrapper');
+const wrapper = require('../../../util/asyncwrapper');
 const mcheckcache = require('../auth/middle/mcheckcache');
 
 router.post('/', wrapper(paymentsCtrls.postCreate));

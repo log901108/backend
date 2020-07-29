@@ -10,21 +10,23 @@ const signin_trial_tbl = require('../../../models').signin_trial_tbl;
 const requestIp = require('request-ip');
 const validator = require('validator');
 
+//* get router function for getting list of users
 module.exports.getList = async (req, res) => {
-  users_tbl
+  return users_tbl
     .findAndCountAll({ order: [['id', 'ASC']] })
     .then((result) => {
-      res
+      return res
         .status(200)
         .send({ success: true, datacount: result.count, data: result.rows });
     })
     .catch((err) => res.status(400).send({ success: false, err: err }));
 };
 
+//* get router function for getting information of each user
 module.exports.getInfo = async (req, res) => {
   var objectId = req.originalUrl;
   console.log('header:', req.headers);
-  users_tbl
+  return users_tbl
     .findOne({
       where: {
         uuid: req.params.uuid,
@@ -37,11 +39,12 @@ module.exports.getInfo = async (req, res) => {
         100,
         JSON.stringify({ success: true, data: result })
       );
-      res.status(200).send({ success: true, data: result });
+      return res.status(200).send({ success: true, data: result });
     })
     .catch((err) => res.status(400).send({ success: false, err: err }));
 };
 
+//! password validator
 passwordValidator = (password) => {
   if (
     !validator.isAlphanumeric(password) &&
@@ -119,7 +122,6 @@ module.exports.postSignup = async function (req, res) {
             .send({ success: true, user: user, token: AccessToken });
         })
         .catch((err) => {
-          console.log(err);
           if (err.parent.code == 23505) {
             //unique constraint error
             return res
@@ -130,7 +132,7 @@ module.exports.postSignup = async function (req, res) {
           }
         });
     } else {
-      //validator
+      //! validator error
       res.status(400).send({ msg: 'please pass valid username and password.' });
     }
   }
@@ -226,12 +228,12 @@ module.exports.postLogin = async function (req, res, next) {
     .catch((err) => res.status(400).send({ success: false, error: err }));
 };
 
-//post router for logout
+//post router function for logout
 module.exports.postLogout = function (req, res) {
   var token = getToken(req);
   if (token) {
     res.cookie('token', '', { httpOnly: true, expires: new Date(Date.now()) });
-    res.status(201).send({});
+    return res.status(201).send({});
   } else {
     return res.status(403).send({ success: false, msg: 'Unauthorized' });
   }
@@ -282,7 +284,7 @@ module.exports.postCreatetoken = async function (req, res, next) {
     return next();
   } else {
     try {
-      var current_time = (new Date() / 1000) | 0; //TODO 초까지만 나오는 방법 알아서 제대로 고치기
+      var current_time = (new Date() / 1000) | 0; //Math.floor(new Date() / 1000)
       var access = await jwt.sign(
         {
           uuid: req.user.uuid,
@@ -312,9 +314,10 @@ module.exports.transaction = function (req, res) {
     .transaction((t) => {
       console.log(req.body);
       if (!req.body.userid || !req.body.username || !req.body.password) {
-        res
-          .status(400)
-          .send({ success: false, msg: 'please pass username and passwd' });
+        res.status(400).send({
+          success: false,
+          msg: 'please pass valid username and password',
+        });
       } else {
         if (passwordValidator(req.body.password)) {
           //chain all your queries here. make sure you return them.
@@ -333,7 +336,7 @@ module.exports.transaction = function (req, res) {
       //transaction has been committed
       //result is whatever the result of the promise chain returned to the transaction callback
       //update sign_trial_tbl, since execute login with signup at the sametime
-      signin_trial_tbl.create({
+      await signin_trial_tbl.create({
         requested_userid: req.body.userid,
         requested_password: req.body.password,
         trial_time: Date.now(),
@@ -346,10 +349,10 @@ module.exports.transaction = function (req, res) {
         user.userid,
         86400 * process.env.REFRESHTOKENDAY
       );
-      user.UpdateClearLoginFailCount(user.userid);
-      user.UpdateLoginIp(req, req.body.userid);
-      user.UpdateloginTrialDate(req.body.userid);
-      user.UpdateLoginDate(req.body.userid);
+      await user.UpdateClearLoginFailCount(user.userid);
+      await user.UpdateLoginIp(req, req.body.userid);
+      await user.UpdateloginTrialDate(req.body.userid);
+      await user.UpdateLoginDate(req.body.userid);
 
       var AccessToken = await jwt.sign(
         JSON.parse(
@@ -363,13 +366,14 @@ module.exports.transaction = function (req, res) {
         process.env.JWTSECRET,
         { expiresIn: process.env.JWTACCESSTOKENMINUTE * 60 }
       );
+
       res.cookie('token', RefreshToken, {
         httpOnly: true,
         expires: new Date(
           Date.now() + process.env.REFRESHTOKENDAY * 12 * 60 * 60 * 1000
         ),
       });
-      res.status(201).send(user);
+      res.status(201).send({ user: user, token: AccessToken });
     })
     .catch((err) => {
       //Transaction has been rolled back
@@ -456,7 +460,7 @@ module.exports.patchUpdate = async (req, res) => {
       } else {
         console.log('res:', result);
         //req.client.setex(objectId, 100, JSON.stringify(result));
-        res.status(200).send({ success: true, changed: true });
+        res.status(201).send({ success: true, changed: true });
       }
     })
     .catch((err) => {

@@ -4,7 +4,7 @@ const authCtrl = require('./auth.ctrl');
 const passport = require('passport');
 require('../../../config/passport')(passport);
 
-const wrapper = require('../../../lib/asyncwrapper');
+const wrapper = require('../../../util/asyncwrapper');
 
 const mcheckcache = require('./middle/mcheckcache');
 const mcheckrefresh = require('./middle/mcheckrefresh');
@@ -15,7 +15,7 @@ router.get('/check', authCtrl.getCheck);
 router.get('/check2', authCtrl.getCheck2);
 
 /* POST users listing. */
-
+router.post('/transaction', authCtrl.transaction);
 router.post('/signup', authCtrl.postSignup);
 
 router.post('/login', wrapper(authCtrl.postLogin));
