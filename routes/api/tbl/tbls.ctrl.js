@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
-//const journals_tbl = require('../../../models').journals_tbl;
-//const tbls_tbl = require('../../../models').tbls_tbl;
+const path = require('path');
 const Sequelize = require('sequelize');
 const { DataTypes, QueryTypes } = require('sequelize');
 const env = process.env.NODE_ENV || 'development';
@@ -76,13 +75,12 @@ module.exports.postCreate = async (req, res, next) => {
         });
 
       const file = 'tenants_tbl.js';
-      console.log(file);
-      //var tblmodel = require(path.join(__dirname + '/../../../models', file))(
-      //  sequelize,
-      //  DataTypes
-      //);
+      var tblmodel = require(path.join(__dirname + '/../../../models/', file))(
+        sequelize,
+        DataTypes
+      );
 
-      var tblmodel = require('../../../models').tenants_tbl;
+      //var tblmodel = require(__dirname + '/../../../models').tenants_tbl;
       console.log(tblmodel);
       db[tblmodel.name] = tblmodel;
       console.log('db:', db);
