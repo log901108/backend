@@ -11,6 +11,6 @@ router.post('/sync', wrapper(tblsCtrls.postCreateSync));
 router.get('/:id', wrapper(mcheckchache, tblsCtrls.getRead));
 router.delete('/:id', wrapper(tblsCtrls.deleteDelete));
 
-router.post('/insert', wrapper(tblsCtrls.postInsert));
+router.post('/insert', wrapper(tblsCtrls.postCreate));
 
 module.exports = router;
