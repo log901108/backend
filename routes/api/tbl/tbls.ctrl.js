@@ -37,7 +37,7 @@ const sanitizeOption = {
   allowedSchemes: ['data', 'http'],
 };
 
-module.exports.postCreate = async (req, res, next) => {
+exports.postCreate = async (req, res, next) => {
   let sequelize;
   const tbl = req.body.tbl;
   const tenant = req.body.tenant;
@@ -162,7 +162,7 @@ module.exports.postCreate = async (req, res, next) => {
   }
 };
 
-module.exports.postInsert = async (req, res, next) => {
+exports.postInsert2 = async (req, res, next) => {
   let sequelize;
   const tbl = req.body.tbl;
   const tenant = req.body.tenant;
@@ -271,7 +271,7 @@ module.exports.postInsert = async (req, res, next) => {
   }
 };
 
-module.exports.postCreateSync = async (req, res, next) => {
+exports.postCreateSync = async (req, res, next) => {
   let sequelize;
   const tbl = req.body.tbl;
   var db = {};
@@ -391,7 +391,7 @@ module.exports.postCreateSync = async (req, res, next) => {
   }
 };
 
-module.exports.postInsert = async (req, res, next) => {
+exports.postInsert = async (req, res, next) => {
   let sequelize;
   const tbl = req.body.tbl;
   const tenant = req.body.tenant;
@@ -500,7 +500,7 @@ module.exports.postInsert = async (req, res, next) => {
   }
 };
 
-module.exports.getRead = (req, res, next) => {
+exports.getRead = (req, res, next) => {
   try {
   } catch (err) {
     console.log(err);
@@ -508,6 +508,6 @@ module.exports.getRead = (req, res, next) => {
   }
 };
 
-module.exports.patchUpdate = async (req, res, next) => {};
+exports.patchUpdate = async (req, res, next) => {};
 
-module.exports.deleteDelete = async (req, res, next) => {};
+exports.deleteDelete = async (req, res, next) => {};

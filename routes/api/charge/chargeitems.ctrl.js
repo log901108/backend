@@ -34,7 +34,7 @@ const sanitizeOption = {
   allowedSchemes: ['data', 'http'],
 };
 
-module.exports.postCreate = async (req, res, next) => {
+exports.postCreate = async (req, res, next) => {
   var item,
     title,
     type,
@@ -87,7 +87,7 @@ module.exports.postCreate = async (req, res, next) => {
   }
 };
 
-module.exports.getRead = (req, res, next) => {
+exports.getRead = (req, res, next) => {
   try {
     const path = req.originalUrl;
     console.log(path);
@@ -115,9 +115,9 @@ module.exports.getRead = (req, res, next) => {
   }
 };
 
-module.exports.patchUpdate = async (req, res, next) => {};
+exports.patchUpdate = async (req, res, next) => {};
 
-module.exports.deleteDelete = async (req, res, next) => {
+exports.deleteDelete = async (req, res, next) => {
   const id = req.params.id;
 
   charge_items_tbl.findOne({ where: { id: id } }).then((result) => {

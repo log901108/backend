@@ -3,12 +3,14 @@ var router = express.Router();
 
 const roomsCtrls = require('./rooms.ctrl');
 
+const wrapper = require('../../../util/asyncwrapper');
+
 const mcheckchache = require('../auth/middle/mcheckcache');
 
-router.post('/', roomsCtrls.postCreate);
-router.get('/:id', mcheckchache, roomsCtrls.getRead);
-router.delete('/:id', roomsCtrls.deleteDelete);
-router.post('/profile', roomsCtrls.postProfile);
-router.get('/profile/:name', roomsCtrls.getProfile);
+router.post('/', wrapper(roomsCtrls.postCreate));
+router.get('/:id', mcheckchache, wrapper(roomsCtrls.getRead));
+router.delete('/:id', wrapper(roomsCtrls.deleteDelete));
+router.post('/profile', wrapper(roomsCtrls.postProfile));
+router.get('/profile/:name', wrapper(roomsCtrls.getProfile));
 
 module.exports = router;

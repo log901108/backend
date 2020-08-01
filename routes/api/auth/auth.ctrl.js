@@ -11,7 +11,7 @@ const requestIp = require('request-ip');
 const validator = require('validator');
 
 //* get router function for getting list of users
-module.exports.getList = async (req, res) => {
+exports.getList = async (req, res) => {
   return users_tbl
     .findAndCountAll({ order: [['id', 'ASC']] })
     .then((result) => {
@@ -23,7 +23,7 @@ module.exports.getList = async (req, res) => {
 };
 
 //* get router function for getting information of each user
-module.exports.getInfo = async (req, res) => {
+exports.getInfo = async (req, res) => {
   var objectId = req.originalUrl;
   console.log('header:', req.headers);
   return users_tbl
@@ -57,7 +57,7 @@ passwordValidator = (password) => {
 };
 
 //post router function for signup
-module.exports.postSignup = async function (req, res) {
+exports.postSignup = async function (req, res) {
   if (!req.body.userid || !req.body.username || !req.body.password) {
     return res.status(400).send({ msg: 'Please pass username and password.' });
   } else {
@@ -139,7 +139,7 @@ module.exports.postSignup = async function (req, res) {
 };
 
 //post router function for login
-module.exports.postLogin = async function (req, res, next) {
+exports.postLogin = async function (req, res, next) {
   await signin_trial_tbl.create({
     requested_userid: req.body.userid,
     requested_password: req.body.password,
@@ -229,7 +229,7 @@ module.exports.postLogin = async function (req, res, next) {
 };
 
 //post router function for logout
-module.exports.postLogout = function (req, res) {
+exports.postLogout = function (req, res) {
   var token = getToken(req);
   if (token) {
     res.cookie('token', '', { httpOnly: true, expires: new Date(Date.now()) });
@@ -245,7 +245,7 @@ getToken = function (req) {
   return token;
 };
 
-module.exports.getCheck2 = async function (req, res) {
+exports.getCheck2 = async function (req, res) {
   var access = await getToken(req);
   if (!access) {
     res.status(401).send({ success: false, msg: 'Unauthorized' });
@@ -263,7 +263,7 @@ module.exports.getCheck2 = async function (req, res) {
   }
 };
 
-module.exports.getCheck = async function (req, res) {
+exports.getCheck = async function (req, res) {
   var user = null;
   if (req.user) {
     user = req.user;
@@ -277,7 +277,7 @@ module.exports.getCheck = async function (req, res) {
 };
 
 //! Issue Access Token by Refresh Token
-module.exports.postCreatetoken = async function (req, res, next) {
+exports.postCreatetoken = async function (req, res, next) {
   var token = null;
   if (req && req.cookies) token = req.cookies.token;
   if (!token) {
@@ -309,7 +309,7 @@ module.exports.postCreatetoken = async function (req, res, next) {
 };
 
 //signup with transaction
-module.exports.transaction = function (req, res) {
+exports.transaction = function (req, res) {
   return models.sequelize
     .transaction((t) => {
       console.log(req.body);
@@ -389,7 +389,7 @@ module.exports.transaction = function (req, res) {
 };
 
 //delete data with delete method
-module.exports.deleteDelete = async (req, res) => {
+exports.deleteDelete = async (req, res) => {
   const user_id = req.params.uuid;
   return models.sequelize
     .transaction((t) => {
@@ -423,7 +423,7 @@ module.exports.deleteDelete = async (req, res) => {
 };
 
 //update data with patch method
-module.exports.patchUpdate = async (req, res) => {
+exports.patchUpdate = async (req, res) => {
   const user_id = req.params.uuid;
   var updatePhrase = {};
 

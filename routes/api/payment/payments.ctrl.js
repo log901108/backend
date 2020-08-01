@@ -36,7 +36,7 @@ const sanitizeOption = {
   allowedSchemes: ['data', 'http'],
 };
 
-module.exports.postCreate = async (req, res, next) => {
+exports.postCreate = async (req, res, next) => {
   var charge,
     ledger,
     title,
@@ -100,7 +100,7 @@ module.exports.postCreate = async (req, res, next) => {
   }
 };
 
-module.exports.getRead = (req, res, next) => {
+exports.getRead = (req, res, next) => {
   const path = req.originalUrl;
   const url = req.url;
   const id = req.params.id;
@@ -123,7 +123,7 @@ module.exports.getRead = (req, res, next) => {
   }
 };
 
-module.exports.getList = async (req, res, next) => {
+exports.getList = async (req, res, next) => {
   try {
     var objectId = req.originalUrl;
     return payments_tbl
@@ -157,9 +157,9 @@ module.exports.getList = async (req, res, next) => {
   }
 };
 
-module.exports.patchUpdate = async (req, res, next) => {};
+exports.patchUpdate = async (req, res, next) => {};
 
-module.exports.deleteDelete = async (req, res, next) => {
+exports.deleteDelete = async (req, res, next) => {
   const id = req.params.id;
 
   return payments_tbl.findByPk(id).then((result) => {
@@ -174,7 +174,7 @@ module.exports.deleteDelete = async (req, res, next) => {
   });
 };
 
-module.exports.postProfile = async (req, res, next) => {
+exports.postProfile = async (req, res, next) => {
   req.accepts('application/json');
   var key = req.body.name;
   var value = JSON.stringify(req.body);
@@ -190,7 +190,7 @@ module.exports.postProfile = async (req, res, next) => {
   });
 };
 
-module.exports.getProfile = async (req, res, next) => {
+exports.getProfile = async (req, res, next) => {
   var key = req.params.name;
 
   req.cache.get(key, function (err, data) {
