@@ -22,6 +22,7 @@ var ledgerRouter = require('./routes/api/ledger');
 var roomRouter = require('./routes/api/room');
 var tenantRouter = require('./routes/api/tenant');
 var tblRouter = require('./routes/api/tbl');
+var voucherRouter = require('./routes/api/voucher');
 
 var mjwtdecode = require('./routes/api/auth/middle/mjwtdecode');
 var mjwtaccesstoken = require('./routes/api/auth/middle/maccesstoken');
@@ -61,6 +62,7 @@ app.use('/api/ledger', ledgerRouter);
 app.use('/api/room', roomRouter);
 app.use('/api/tenant', tenantRouter);
 app.use('/api/tbl', tblRouter);
+app.use('/api/voucher', voucherRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
