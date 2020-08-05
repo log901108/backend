@@ -36,27 +36,38 @@ const sanitizeOption = {
 };
 
 exports.postCreate = async (req, res, next) => {
-  const voucher_type_id = req.body.voucher_type;
+  const voucher_credit_id = req.body.voucher_credit_id;
+  const voucher_debit_id = req.body.voucher_debit_id;
 
-  return vouchers_tbl
-    .create(
-      {
-        voucher_type: voucher_type_id,
-      },
-      { returning: true, plain: true }
-    )
+  return voucher_associations_tbl
+    .create({
+      //credit_voucher_id: result.dataValues.voucher_id,
+      //! 현재 1개의 debit 전표가 두개의 credit 전표를 참조하려면 credit전표두개를 array로 받아서 voucher_associations_tbl에 두번 create해야됨
+      //! credit 전표쪽에서 1번 debit전표를 저장하면 되는데, 이렇게 되면 이중으로 저장하는 거임. 이걸 해야 되는지 말아야 하는지 생각해볼 문제임
+      //!                   debit                  |            credit
+      //!    -------------------------------------------------------------------------
+      //!     1.   당좌예금     1,000,000,000       |  3. 현금             950,000,000
+      //!     2.       적금       500,000,000       |  4. 유동성 금융자산    50,000,000
+      //!                                           | 5. 매출채권           500,000,000
+      //! 이 때 1번은 debit 대체전표로서 3,4,5번과 credit 대체전표 연결. 2번도 3,4,5와 연결
+      //! 그러므로 voucher는 생성하는 api 따로 association을 지정하는 api 따로 존재해야 한다는 뜻이다.
+      //! 이렇게 되면 이중 저장하는 게 아니라 debit 1에 대해 credit 3,4,5로 voucher_associations_tbl에 3개의 row들을 개별적으로 저장하고
+      //! 2번 도 voucher_associations_tbl에 3,4,5에 대한 관계를 저장하면 끝.
+      credit_voucher_id: voucher_credit_id,
+      debit_voucher_id: voucher_debit_id,
+    })
     .then((result) => {
-      return res.status(201).send({ success: true, data: result });
+      console.log(req.user);
+      console.log(req.accesstoken);
+      return res.status(200).send({ token: req.accesstoken, data: result });
     })
     .catch((err) => {
-      return res.status(400).send({ success: false, message: err });
+      return res.status(400).send({ err });
     });
 };
 
 //! https://velog.io/@bigbrothershin/Backend-sequelize-MN-%EA%B4%80%EA%B3%84
 exports.getList = (req, res, next) => {
-  const path = req.originalUrl;
-
   return vouchers_tbl
     .findAll({
       include: [
@@ -77,7 +88,6 @@ exports.getList = (req, res, next) => {
       if (!result) {
         res.status(404).send({ success: false });
       } else {
-        req.client.setex(path, 100, JSON.stringify(result));
         res.status(200).send(result);
       }
     })

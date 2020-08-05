@@ -1,0 +1,9 @@
+
+
+POST http://0count.com/back/api/voucher/ HTTP/1.1
+content-type: application/json
+voucher_type:1
+voucher_credit_id: 1
+voucher_debit_id: 2
+
+

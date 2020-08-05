@@ -1,0 +1,15 @@
+
+
+GET http://0count.com/back/api/voucher/
+
+HTTP/1.1 200 OK
+Server: nginx/1.14.0 (Ubuntu)
+Date: Wed, 05 Aug 2020 05:18:18 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 2
+Connection: close
+X-Powered-By: Express
+Access-Control-Allow-Origin: *
+ETag: W/"2-l9Fw4VUO7kr8CvBlt4zaMCqXZ0w"
+
+[]
