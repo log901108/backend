@@ -10,7 +10,7 @@ const signin_trial_tbl = require('../../../models').signin_trial_tbl;
 const requestIp = require('request-ip');
 const validator = require('validator');
 
-//* get router function for getting list of users
+//* @get router function for getting list of users
 exports.getList = async (req, res) => {
   return users_tbl
     .findAndCountAll({ order: [['id', 'ASC']] })
@@ -22,7 +22,7 @@ exports.getList = async (req, res) => {
     .catch((err) => res.status(400).send({ success: false, err: err }));
 };
 
-//* get router function for getting information of each user
+//* @get router function for getting information of each user
 exports.getInfo = async (req, res) => {
   var objectId = req.originalUrl;
   console.log('header:', req.headers);
@@ -56,7 +56,7 @@ passwordValidator = (password) => {
   }
 };
 
-//post router function for signup
+//@post router function for signup
 exports.postSignup = async function (req, res) {
   if (!req.body.userid || !req.body.username || !req.body.password) {
     return res.status(400).send({ msg: 'Please pass username and password.' });
@@ -138,7 +138,7 @@ exports.postSignup = async function (req, res) {
   }
 };
 
-//post router function for login
+//* @post router function for login
 exports.postLogin = async function (req, res, next) {
   await signin_trial_tbl.create({
     requested_userid: req.body.userid,
@@ -228,7 +228,7 @@ exports.postLogin = async function (req, res, next) {
     .catch((err) => res.status(400).send({ success: false, error: err }));
 };
 
-//post router function for logout
+//* @post router function for logout
 exports.postLogout = function (req, res) {
   var token = getToken(req);
   if (token) {
@@ -276,7 +276,7 @@ exports.getCheck = async function (req, res) {
   }
 };
 
-//! Issue Access Token by Refresh Token
+//* @post router for issuing Access Token by Refresh Token at cookie
 exports.postCreatetoken = async function (req, res, next) {
   var token = null;
   if (req && req.cookies) token = req.cookies.token;
@@ -284,7 +284,7 @@ exports.postCreatetoken = async function (req, res, next) {
     return next();
   } else {
     try {
-      var current_time = (new Date() / 1000) | 0; //Math.floor(new Date() / 1000)
+      var current_time = (new Date() / 1000) | 0; //same as with code : Math.floor(new Date() / 1000)
       var access = await jwt.sign(
         {
           uuid: req.user.uuid,
@@ -308,7 +308,7 @@ exports.postCreatetoken = async function (req, res, next) {
   }
 };
 
-//signup with transaction
+//* @post router signup with transaction
 exports.transaction = function (req, res) {
   return models.sequelize
     .transaction((t) => {
@@ -388,7 +388,7 @@ exports.transaction = function (req, res) {
     });
 };
 
-//delete data with delete method
+//* @delete router for delete data with delete method
 exports.deleteDelete = async (req, res) => {
   const user_id = req.params.uuid;
   return models.sequelize
@@ -422,7 +422,7 @@ exports.deleteDelete = async (req, res) => {
     });
 };
 
-//update data with patch method
+//* @patch router for update data with patch method
 exports.patchUpdate = async (req, res) => {
   const user_id = req.params.uuid;
   var updatePhrase = {};

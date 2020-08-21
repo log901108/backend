@@ -8,8 +8,8 @@ const mcheckchache = require('../auth/middle/mcheckcache');
 
 router.post('/create', vouchersCtrls.postCreate);
 router.get('/list', mcheckchache, vouchersCtrls.getList);
-router.get('/:id', mcheckchache, vouchersCtrls.getRead);
-router.delete('/:id', vouchersCtrls.deleteDelete);
+router.get('/list/:id', mcheckchache, vouchersCtrls.getRead);
+router.delete('/list/:id', vouchersCtrls.deleteDelete);
 
 router.post('/association', voucherassociationsCtrls.postCreate);
 router.get('/association/list', voucherassociationsCtrls.getList);

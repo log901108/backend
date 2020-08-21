@@ -38,66 +38,27 @@ const sanitizeOption = {
 
 exports.postCreate = async (req, res, next) => {
   var charge,
-    ledger,
-    title,
-    type,
-    amount,
-    tags,
-    details = null;
+    payment = null;
+
   if (req.body.charge) {
     charge = req.body.charge;
   }
-  if (req.body.ledger) {
-    ledger = req.body.ledger;
-  }
-  if (req.body.title) {
-    title = req.body.title;
-  }
-  if (req.body.type) {
-    type = req.body.type;
-  }
-  if (req.body.amount) {
-    amount = req.body.amount;
-  }
-  if (req.body.body) {
-    body = req.body.body;
-  }
-  if (req.body.tags) {
-    tags = req.body.tags;
-  }
-  if (req.body.details) {
-    details = req.body.details;
-  }
-  //var userJson = { created_id: req.user.uuid, created_userid: req.user.userid };
-  if (title && body) {
-    return payments_tbl
-      .create({
-        charge_id: charge,
-        ledger_id: ledger,
-        account_title: title,
-        account_body: sanitizeHtml(body, sanitizeOption),
-        //account_details: userJson,
-      })
-      .then((result) => {
-        console.log(req.user);
-        console.log(req.accesstoken);
-        chargepayment_tbl.create({
-          charge_id: charge,
-          payment_id: result.payment_id,
-        });
-        return res.status(200).send({ token: req.accesstoken, data: result });
-      })
-      .catch((err) => {
-        return res.status(400).send({ success: false, message: err });
-      });
 
-    //await payments_tbl.addcharges_tbl()
-  } else {
-    res.status(400).send({
-      success: false,
-      msg: 'one or more required contents are missing',
-    });
+  if (req.body.payment) {
+    payment = req.body.payment;
   }
+
+  return chargepayment_tbl
+    .create({
+      charge_id: charge,
+      payment_id: payment,
+    })
+    .then((result) => {
+      return res.status(200).send({ token: req.accesstoken, data: result });
+    })
+    .catch((err) => {
+      return res.status(400).send({ success: false, message: err });
+    });
 };
 
 exports.getRead = (req, res, next) => {

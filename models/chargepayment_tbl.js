@@ -8,24 +8,24 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.BIGINT,
       },
-      payment_journal_id: {
-        //! fk from charge_journal_tbl
+      payment_id: {
+        //! fk from charge_tbl
         type: DataTypes.BIGINT,
         allowNull: true,
         references: {
           model: 'payments_tbl',
-          key: 'payment_journal_id',
+          key: 'payment_id',
         },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       },
-      charge_journal_id: {
-        //! fk from charge_journal_tbl
+      charge_id: {
+        //! fk from charge_tbl
         type: DataTypes.BIGINT,
         allowNull: true,
         references: {
           model: 'charges_tbl',
-          key: 'charge_journal_id',
+          key: 'charge_id',
         },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',

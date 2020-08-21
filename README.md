@@ -11,9 +11,9 @@ This is repository for OC backend.<br/>
 - https://www.erdcloud.com/d/M8sngcQTf7GLBj842 </br>
 - charge_items_tbl : 부과 종목 (전기, 수도, 난방 등) + 자의적으로 추가 가능 <br/>
 - charges_tbl : 부과 journal 테이블. 부과 대상 room과 수납 payment를 여러개 가질수 있음 </br> 
-- payments_tbl : 수납 journal 테이블. charge_journal의 uuid 혹은 pk를 fk로 가짐.</br>
+- payments_tbl : 수납 journal 테이블. charge의 uuid 혹은 pk를 fk로 가짐.</br>
 - ledgers_tbl : 원장 목록 테이블. 현재 사용방법 모색중. 일차적으로 몇기에 해당하는 수납 혹은 부과 인지 알아내는데 필요한 정보를 담고 있을 수 있음</br>
-- rooms_tbl : 부과 및 수납의 대상이 되는 room들의 테이블 tenants_tbl의 여러 tenant를 가질 수 있고, 여러개의 charge_journal을 가질 수 있음</br>
+- rooms_tbl : 부과 및 수납의 대상이 되는 room들의 테이블 tenants_tbl의 여러 tenant를 가질 수 있고, 여러개의 charge을 가질 수 있음</br>
 - settings_tbl : 기본정보를 담고 있는 테이블 </br>
 
 

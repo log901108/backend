@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
   const payments_tbl = sequelize.define(
     'payments_tbl',
     {
-      payment_journal_id: {
+      payment_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -15,13 +15,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
-      charge_journal_id: {
+      charge_id: {
         //! fk from charges_tbl
         type: DataTypes.BIGINT,
         allowNull: true,
         references: {
           model: 'charges_tbl',
-          key: 'charge_journal_id',
+          key: 'charge_id',
         },
       },
       ledger_id: {
@@ -80,7 +80,7 @@ module.exports = (sequelize, DataTypes) => {
   payments_tbl.associate = function (models) {
     //associations can be defined here
     //payments_tbl.belongsTo(models.charges_tbl, {
-    //  foreignKey: { name: 'charge_journal_uuid', allowNull: true },
+    //  foreignKey: { name: 'charge_uuid', allowNull: true },
     //});
     //payments_tbl.belongsTo(models.ledgers_tbl, {
     //  foreignKey: { name: 'ledger_id', allowNull: true },
@@ -88,8 +88,8 @@ module.exports = (sequelize, DataTypes) => {
     payments_tbl.belongsToMany(models.charges_tbl, {
       through: 'chargepayment_tbl',
       //as: 'Followers', // 같은 테이블 끼리 다대다관계이면 구별을 위해 as로 구별. JavaScript 객체에서 사용할 이름
-      foreignKey: 'charge_journal_id', // DB 컬럼명: 반대로 쓰는 이유는 foreignKey가 남의 테이블 id를 가리키기 때문
-      otherKey: 'payment_journal_id',
+      foreignKey: 'charge_id', // DB 컬럼명: 반대로 쓰는 이유는 foreignKey가 남의 테이블 id를 가리키기 때문
+      otherKey: 'payment_id',
     });
   };
   return payments_tbl;

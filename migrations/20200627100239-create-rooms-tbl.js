@@ -30,7 +30,7 @@ module.exports = {
                 type: Sequelize.INTEGER,
               },
               tenant_id: {
-                //! fk from charge_journal_tbl
+                //! fk from charge_tbl
                 type: Sequelize.BIGINT,
                 allowNull: true,
                 references: {

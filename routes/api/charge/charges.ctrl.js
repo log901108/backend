@@ -75,8 +75,8 @@ exports.postCreate = async (req, res, next) => {
   //var userJson = { created_id: req.user.uuid, created_userid: req.user.userid };
   if (title && body) {
     chargepayment_tbl.create({
-      charge_journal_id: 1,
-      payment_journal_id: 2,
+      charge_id: 1,
+      payment_id: 2,
     });
     charges_tbl
       .create({
@@ -118,7 +118,7 @@ exports.getList = async (req, res, next) => {
         //  },
         //],
         include: [payments_tbl],
-        order: [['charge_journal_id', 'ASC']],
+        order: [['charge_id', 'ASC']],
       })
       .then((result) => {
         req.client.setex(

@@ -8,13 +8,13 @@ module.exports = {
           .createTable(
             'charges_tbl',
             {
-              charge_journal_id: {
+              charge_id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.BIGINT,
               },
-              charge_journal_uuid: {
+              charge_uuid: {
                 allowNull: false,
                 //primaryKey: true,
                 type: Sequelize.DataTypes.UUID,

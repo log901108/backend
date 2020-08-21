@@ -96,7 +96,24 @@ exports.getRead = (req, res, next) => {
     console.log(id);
 
     vouchers_tbl
-      .findByPk(id)
+      .findOne({
+        where: {
+          voucher_id: id,
+        },
+        include: [
+          {
+            model: vouchers_tbl,
+            as: 'credit',
+            attributes: ['voucher_id'],
+          },
+          {
+            model: vouchers_tbl,
+            as: 'debit',
+            //attributes: ['uuid'],
+          },
+        ],
+        order: [['voucher_id', 'DESC']],
+      })
       .then((result) => {
         if (!result) {
           res.status(404).send({ success: false });
