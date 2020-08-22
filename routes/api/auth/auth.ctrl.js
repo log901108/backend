@@ -58,6 +58,7 @@ passwordValidator = (password) => {
 
 //@post router function for signup
 exports.postSignup = async function (req, res) {
+  console.log(req.body);
   if (!req.body.userid || !req.body.username || !req.body.password) {
     return res.status(400).send({ msg: 'Please pass username and password.' });
   } else {
@@ -77,10 +78,12 @@ exports.postSignup = async function (req, res) {
             trial_ip: requestIp.getClientIp(req),
           });
 
+          console.log(user);
           //Since user gets login session with signup, update users_tbl
           const RefreshToken = await user.UpdateRefreshtoken(
             user.uuid,
             user.userid,
+            user.username,
             86400 * process.env.REFRESHTOKENDAY
           ); //! 14days
           await user.UpdateClearLoginFailCount(user.userid);
@@ -93,6 +96,7 @@ exports.postSignup = async function (req, res) {
               JSON.stringify({
                 uuid: user.uuid,
                 userid: user.userid,
+                username: user.username,
                 signinDate: Date.now(),
                 //refresh: RefreshToken,
               })
@@ -128,7 +132,9 @@ exports.postSignup = async function (req, res) {
               .status(409)
               .send({ message: 'already exists id', error: err });
           } else {
-            return res.status(400).send({ message: 'commit db error' });
+            return res
+              .status(400)
+              .send({ error: err, message: 'commit db error' });
           }
         });
     } else {
@@ -178,6 +184,7 @@ exports.postLogin = async function (req, res, next) {
             const RefreshToken = await user.UpdateRefreshtoken(
               user.uuid,
               req.body.userid,
+              user.username,
               86400 * process.env.REFRESHTOKENDAY //! 14days
             );
             await user.UpdateClearLoginFailCount(req);
@@ -191,6 +198,7 @@ exports.postLogin = async function (req, res, next) {
                 JSON.stringify({
                   uuid: user.uuid,
                   userid: user.userid,
+                  username: user.username,
                   signinDate: Date.now(),
                   //refresh: RefreshToken,
                 })
@@ -257,7 +265,11 @@ exports.getCheck2 = async function (req, res) {
       console.log('decode:', data);
       console.log(data.uuid);
       console.log(data.userid);
-      var user = { uuid: data.uuid, userid: data.userid };
+      var user = {
+        uuid: data.uuid,
+        username: data.username,
+        userid: data.userid,
+      };
       res.status(200).send(user);
     });
   }
@@ -289,6 +301,7 @@ exports.postCreatetoken = async function (req, res, next) {
         {
           uuid: req.user.uuid,
           userid: req.user.userid,
+          username: req.user.username,
           signinDate: req.user.signinDate,
           iat: current_time,
           exp: current_time + process.env.JWTACCESSTOKENMINUTE * 60,
@@ -347,6 +360,7 @@ exports.transaction = function (req, res) {
       const RefreshToken = await user.UpdateRefreshtoken(
         user.uuid,
         user.userid,
+        user.username,
         86400 * process.env.REFRESHTOKENDAY
       );
       await user.UpdateClearLoginFailCount(user.userid);
@@ -359,6 +373,7 @@ exports.transaction = function (req, res) {
           JSON.stringify({
             uuid: user.uuid,
             userid: user.userid,
+            username: user.username,
             signinDate: Date.now(),
             //refresh: RefreshToken,
           })
@@ -448,7 +463,7 @@ exports.patchUpdate = async (req, res) => {
         console.log('user:', user.uuid);
         req.client.del(`/api/auth/info/${user_id}`); //! delete cache
         //req.client.quit();
-        user.update(updatePhrase, {
+        return user.update(updatePhrase, {
           returning: true,
           plain: true,
         });

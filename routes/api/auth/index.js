@@ -42,7 +42,7 @@ router.delete(
 router.patch(
   '/update/:uuid',
   mcheckcache,
-  passport.authenticate('bearer', { session: false, failWithError: true }),
+  //passport.authenticate('bearer', { session: false, failWithError: true }),
   authCtrl.patchUpdate
 );
 

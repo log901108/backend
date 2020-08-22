@@ -13,7 +13,7 @@ module.exports = async function (req, res, next) {
         data
       ) {
         //! signinDate 변수 관리 어떻게할지? => signinDate는 유지 iat와 exp만 변경
-        //! req.user = {uuid, userid, signinDate, iat, exp}
+        //! req.user = {uuid, userid, username, signinDate, iat, exp}
         req.user = data;
       });
       return next();

@@ -65,7 +65,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(50),
       },
       refresh_token: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.STRING(1000),
       },
       createdAt: {
         field: 'created_at',
@@ -215,11 +215,19 @@ module.exports = (sequelize, DataTypes) => {
   users_tbl.prototype.UpdateRefreshtoken = async function (
     uuid,
     user,
+    usernickname,
     expiretime
   ) {
+    console.log('username:', usernickname);
     const payload = JSON.parse(
-      JSON.stringify({ uuid: uuid, userid: user, signinDate: Date.now() })
+      JSON.stringify({
+        uuid: uuid,
+        userid: user,
+        username: usernickname,
+        signinDate: Date.now(),
+      })
     );
+    console.log(payload);
     var RefreshToken = await jwt.sign(payload, process.env.JWTSECRET, {
       expiresIn: expiretime,
     });
