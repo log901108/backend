@@ -63,7 +63,7 @@ module.exports = {
               type: Sequelize.STRING(50),
             },
             refresh_token: {
-              type: Sequelize.STRING(1000),
+              type: Sequelize.STRING(1024),
             },
             createdAt: {
               field: 'created_at',

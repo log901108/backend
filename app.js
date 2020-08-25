@@ -24,6 +24,7 @@ var roomRouter = require('./routes/api/room');
 var tenantRouter = require('./routes/api/tenant');
 var tblRouter = require('./routes/api/tbl');
 var voucherRouter = require('./routes/api/voucher');
+var dataRouter = require('./routes/api/data');
 
 var mjwtdecode = require('./routes/api/auth/middle/mjwtdecode');
 var mjwtaccesstoken = require('./routes/api/auth/middle/maccesstoken');
@@ -65,6 +66,7 @@ app.use('/api/room', roomRouter);
 app.use('/api/tenant', tenantRouter);
 app.use('/api/tbl', tblRouter);
 app.use('/api/voucher', voucherRouter);
+app.use('/api/data', dataRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

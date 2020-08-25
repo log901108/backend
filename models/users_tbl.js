@@ -65,7 +65,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(50),
       },
       refresh_token: {
-        type: DataTypes.STRING(1000),
+        type: DataTypes.STRING(1024),
       },
       createdAt: {
         field: 'created_at',
@@ -215,15 +215,14 @@ module.exports = (sequelize, DataTypes) => {
   users_tbl.prototype.UpdateRefreshtoken = async function (
     uuid,
     user,
-    usernickname,
+    username,
     expiretime
   ) {
-    console.log('username:', usernickname);
     const payload = JSON.parse(
       JSON.stringify({
         uuid: uuid,
         userid: user,
-        username: usernickname,
+        username: username,
         signinDate: Date.now(),
       })
     );
