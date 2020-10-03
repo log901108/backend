@@ -9,7 +9,11 @@ const wrapper = require('../../../util/asyncwrapper');
 const mcheckcache = require('./middle/mcheckcache');
 const mcheckrefresh = require('./middle/mcheckrefresh');
 
-router.get('/', authCtrl.getList);
+router.get(
+  '/',
+  passport.authenticate('bearer', { session: false, failWithError: true }),
+  wrapper(authCtrl.getList)
+);
 router.get('/info/:uuid', mcheckcache, authCtrl.getInfo);
 router.get('/check', authCtrl.getCheck);
 router.get('/check2', authCtrl.getCheck2);
