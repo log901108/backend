@@ -314,7 +314,9 @@ exports.postCreatetoken = async function (req, res, next) {
           req.accesstoken = data;
         }
       );
-      return res.status(200).send({ success: true, data: req.accesstoken });
+      return res
+        .status(200)
+        .send({ success: true, data: { accessToken: req.accesstoken } });
     } catch (e) {
       return res.status(400).send({ success: false, error: err });
     }

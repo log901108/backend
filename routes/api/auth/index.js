@@ -22,7 +22,7 @@ router.post('/login', wrapper(authCtrl.postLogin));
 
 router.post(
   '/logout',
-  //passport.authenticate('bearer', { session: false, failWithError: true }),
+  passport.authenticate('bearer', { session: false, failWithError: true }),
   authCtrl.postLogout
 );
 

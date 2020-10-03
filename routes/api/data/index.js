@@ -10,6 +10,11 @@ router.post('/', wrapper(dataCtrl.postCreate));
 router.get('/:id', mcheckcache, wrapper(dataCtrl.getRead));
 router.get('/', mcheckcache, wrapper(dataCtrl.getList));
 router.patch('/:id', mcheckcache, wrapper(dataCtrl.patchUpdate));
+router.patch(
+  '/unmanaged/:id',
+  mcheckcache,
+  wrapper(dataCtrl.patchUpdateUnmanaged)
+);
 router.post('/bulkupdate', wrapper(dataCtrl.postBulkUpload));
 router.delete('/:id', wrapper(dataCtrl.deleteDelete));
 

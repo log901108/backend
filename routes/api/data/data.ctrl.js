@@ -131,15 +131,18 @@ exports.patchUpdate = async (req, res, next) => {
 
   return models.sequelize
     .transaction((t) => {
-      return data_tbl.findOne({ where: { data_id: data_id } }).then((data) => {
-        console.log('data_uuid:', data.uuid);
-        req.client.del(`/api/data/${data_id}`); //! delete cache
-        //req.client.quit();
-        return data.update(updatePhrase, {
-          returning: true,
-          plain: true,
+      return data_tbl
+        .findOne({ where: { data_id: data_id } }, { transaction: t })
+        .then((data) => {
+          console.log('data_uuid:', data.dataValues.data_uuid);
+          req.client.del(`/api/data/${data_id}`); //! delete cache
+          //req.client.quit();
+          return data.update(updatePhrase, {
+            transaction: t,
+            returning: true,
+            plain: true,
+          });
         });
-      });
     })
     .then((result) => {
       console.log('res:', result);
@@ -149,6 +152,43 @@ exports.patchUpdate = async (req, res, next) => {
     .catch((err) => {
       res.status(400).send({ success: false, msg: err });
     });
+};
+
+exports.patchUpdateUnmanaged = async (req, res, next) => {
+  const data_id = req.params.id;
+  var updatePhrase = {};
+
+  if (req.body.data) {
+    updatePhrase['data'] = req.body.data;
+  }
+
+  return models.sequelize.transaction().then((t) => {
+    return data_tbl
+      .findOne(
+        { where: { data_id: data_id } },
+        { transaction: t, returning: true }
+      )
+      .then((data) => {
+        console.log('data_uuid:', data['dataValues']['data_uuid']);
+        req.client.del(`/api/data/${data_id}`); //! delete cache
+        //req.client.quit();
+        return data.update(updatePhrase, {
+          transaction: t,
+          returning: true,
+          plain: true,
+        });
+      })
+      .then((result) => {
+        console.log('res:', result);
+        t.commit();
+        //req.client.setex(objectId, 100, JSON.stringify(result));
+        return res.status(201).send({ success: true, data: result });
+      })
+      .catch((err) => {
+        t.rollback();
+        return res.status(400).send({ success: false, msg: err });
+      });
+  });
 };
 
 exports.deleteDelete = async (req, res, next) => {
@@ -167,14 +207,14 @@ exports.deleteDelete = async (req, res, next) => {
 };
 
 exports.postBulkUpload = async (req, res, next) => {
-  const dataArray = req.body.dataArray;
-  dataArray.map((el) => {
+  const updateDataArray = req.body.dataArray;
+  updateDataArray.map((el) => {
     return { ...el, updatedAt: Date.now() };
   });
+
   return data_tbl
-    .bulkCreate(dataArray, { updateOnDuplicate: ['data', 'updatedAt'] }) //bulkCreate doesn't update updatedAt automatically
+    .bulkCreate(updateDataArray, { updateOnDuplicate: ['data', 'updatedAt'] }) //since bulkCreate doesn't update updatedAt automatically
     .then(() => {
-      // Notice: There are no arguments here, as of right now you'll have to...
       return data_tbl.findAll({ order: [['data_id', 'ASC']] });
     })
     .then((data) => {
