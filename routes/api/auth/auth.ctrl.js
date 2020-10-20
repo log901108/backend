@@ -84,6 +84,7 @@ exports.postSignup = async function (req, res) {
             user.uuid,
             user.userid,
             user.username,
+            user.is_admin,
             86400 * process.env.REFRESHTOKENDAY
           ); //! 14days
           await user.UpdateClearLoginFailCount(user.userid);
@@ -185,6 +186,7 @@ exports.postLogin = async function (req, res, next) {
               user.uuid,
               req.body.userid,
               user.username,
+              user.is_admin,
               86400 * process.env.REFRESHTOKENDAY //! 14days
             );
             await user.UpdateClearLoginFailCount(req);
@@ -363,6 +365,7 @@ exports.transaction = function (req, res) {
         user.uuid,
         user.userid,
         user.username,
+        user.is_admin,
         86400 * process.env.REFRESHTOKENDAY
       );
       await user.UpdateClearLoginFailCount(user.userid);

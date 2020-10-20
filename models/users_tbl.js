@@ -216,6 +216,7 @@ module.exports = (sequelize, DataTypes) => {
     uuid,
     user,
     username,
+    is_admin,
     expiretime
   ) {
     const payload = JSON.parse(
@@ -223,6 +224,7 @@ module.exports = (sequelize, DataTypes) => {
         uuid: uuid,
         userid: user,
         username: username,
+        is_admin: is_admin,
         signinDate: Date.now(),
       })
     );

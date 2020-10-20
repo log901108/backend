@@ -11,7 +11,7 @@ const mcheckrefresh = require('./middle/mcheckrefresh');
 
 router.get(
   '/',
-  passport.authenticate('bearer', { session: false, failWithError: true }),
+  //passport.authenticate('bearer', { session: false, failWithError: true }),
   wrapper(authCtrl.getList)
 );
 router.get('/info/:uuid', mcheckcache, authCtrl.getInfo);
@@ -26,7 +26,7 @@ router.post('/login', wrapper(authCtrl.postLogin));
 
 router.post(
   '/logout',
-  passport.authenticate('bearer', { session: false, failWithError: true }),
+  //passport.authenticate('bearer', { session: false, failWithError: true }),
   authCtrl.postLogout
 );
 
